@@ -86,19 +86,23 @@ export default function Home() {
   }
 
   function updateMarkers() {
+    // Clear existing markers
     markers.forEach(marker => marker.setMap(null));
     
     if (infoWindow) {
       infoWindow.close();
     }
 
+    // If no filters are active, don't show any markers
     if (!selectedEntity && !selectedSiteName && !selectedBuildingName) {
       setMarkers([]);
       return;
     }
 
+    // Start with all rows
     let filteredRows = rows;
     
+    // Apply each filter ONLY if it has a value selected
     if (selectedEntity) {
       filteredRows = filteredRows.filter(item => item.Entity === selectedEntity);
     }
@@ -122,7 +126,10 @@ export default function Home() {
       const lat = parseFloat(parts[0]);
       const lng = parseFloat(parts[1]);
       
-      if (isNaN(lat) || isNaN(lng)) return;
+      if (isNaN(lat) || isNaN(lng)) {
+        console.log("Invalid coords for:", item["Site Name"]);
+        return;
+      }
 
       const marker = new google.maps.Marker({
         position: { lat, lng },
@@ -217,6 +224,8 @@ export default function Home() {
     });
 
     setMarkers(newMarkers);
+    console.log("Filters:", { selectedEntity, selectedSiteName, selectedBuildingName });
+    console.log("Filtered rows:", filteredRows.length, "Markers created:", newMarkers.length);
   }
 
   const clearFilters = () => {
