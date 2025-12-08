@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
+  const [debug, setDebug] = useState(null);
 
   useEffect(() => {
     fetch("/api/properties")
@@ -12,6 +13,7 @@ export default function Home() {
       .then(data => {
         if (data.error) {
           setError(data.error);
+          setDebug(data.debug);
         } else {
           setRows(data);
         }
@@ -61,6 +63,11 @@ export default function Home() {
           border: "1px solid red"
         }}>
           <strong>Error:</strong> {error}
+          {debug && (
+            <pre style={{ marginTop: 10, fontSize: 12 }}>
+              {JSON.stringify(debug, null, 2)}
+            </pre>
+          )}
         </div>
       )}
       
