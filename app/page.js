@@ -6,6 +6,11 @@ export default function Home() {
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
   const [mapLoaded, setMapLoaded] = useState(false);
+  const [entities, setEntities] = useState([]);
+  const [selectedEntity, setSelectedEntity] = useState("");
+  const [map, setMap] = useState(null);
+  const [markers, setMarkers] = useState([]);
+  const [infoWindow, setInfoWindow] = useState(null);
 
   useEffect(() => {
     fetch("/api/properties")
@@ -15,14 +20,16 @@ export default function Home() {
           setError(data.error);
         } else {
           setRows(data);
+          
+          // Extract unique entities
+          const uniqueEntities = [...new Set(data.map(item => item.Entity).filter(Boolean))];
+          setEntities(uniqueEntities.sort());
         }
       })
       .catch(err => setError(err.toString()));
   }, []);
 
   useEffect(() => {
-    if (rows.length === 0) return;
-
     const checkGoogleMaps = setInterval(() => {
       if (typeof google !== "undefined" && google.maps) {
         clearInterval(checkGoogleMaps);
@@ -31,7 +38,13 @@ export default function Home() {
     }, 100);
 
     return () => clearInterval(checkGoogleMaps);
-  }, [rows]);
+  }, []);
+
+  useEffect(() => {
+    if (map && rows.length > 0) {
+      updateMarkers();
+    }
+  }, [selectedEntity, map, rows]);
 
   function formatCurrency(value) {
     if (!value || value === 0) return "N/A";
@@ -39,15 +52,42 @@ export default function Home() {
   }
 
   function initMap() {
-    const map = new google.maps.Map(document.getElementById("map"), {
-      zoom: 6,
-      center: { lat: -37.8136, lng: 144.9631 }
+    // Center on Victoria, Australia
+    const victoriaCenter = { lat: -37.4713, lng: 144.7852 };
+    
+    const newMap = new google.maps.Map(document.getElementById("map"), {
+      zoom: 7,
+      center: victoriaCenter
     });
 
-    const infoWindow = new google.maps.InfoWindow();
-    let markersAdded = 0;
+    const newInfoWindow = new google.maps.InfoWindow();
+    
+    setMap(newMap);
+    setInfoWindow(newInfoWindow);
+    setMapLoaded(true);
+  }
 
-    rows.forEach(item => {
+  function updateMarkers() {
+    // Clear existing markers
+    markers.forEach(marker => marker.setMap(null));
+    
+    // Close info window
+    if (infoWindow) {
+      infoWindow.close();
+    }
+
+    // If no entity selected, don't show any markers
+    if (!selectedEntity) {
+      setMarkers([]);
+      return;
+    }
+
+    // Filter rows by selected entity
+    const filteredRows = rows.filter(item => item.Entity === selectedEntity);
+    
+    const newMarkers = [];
+
+    filteredRows.forEach(item => {
       if (!item.Coordinates) return;
       
       const coords = item.Coordinates.replace(/\s+/g, "");
@@ -106,7 +146,7 @@ export default function Home() {
             <small>Reinstatement Cost: ${formatCurrency(item["Reinstatement Cost\n($)"])}</small>
           </div>
 
-          ${item["Valuer Comments"] ? `
+          ${item["Valuer Comments"] && item["Valuer Comments"] !== 0 ? `
             <div style="margin-top: 10px; padding: 10px; background: #fff3e0; border-radius: 5px;">
               <strong>Comments:</strong><br>
               <small>${item["Valuer Comments"]}</small>
@@ -116,15 +156,16 @@ export default function Home() {
       `;
 
       marker.addListener("click", () => {
+        infoWindow.close(); // Close any open info window
         infoWindow.setContent(contentHTML);
         infoWindow.open(map, marker);
       });
       
-      markersAdded++;
+      newMarkers.push(marker);
     });
 
-    console.log("Markers added:", markersAdded);
-    setMapLoaded(true);
+    setMarkers(newMarkers);
+    console.log("Markers displayed:", newMarkers.length, "for entity:", selectedEntity);
   }
 
   return (
@@ -142,10 +183,42 @@ export default function Home() {
         </div>
       )}
       
-      <p style={{ marginBottom: 20 }}>
-        Total Properties Loaded: {rows.length}
-        {mapLoaded && <span style={{ color: "green", marginLeft: 20 }}>✓ Map Loaded</span>}
-      </p>
+      <div style={{ 
+        marginBottom: 20, 
+        padding: 15, 
+        background: "#f5f5f5", 
+        borderRadius: 5,
+        display: "flex",
+        alignItems: "center",
+        gap: 15
+      }}>
+        <label style={{ fontWeight: "bold" }}>
+          Select Entity:
+        </label>
+        <select 
+          value={selectedEntity} 
+          onChange={(e) => setSelectedEntity(e.target.value)}
+          style={{
+            padding: "8px 12px",
+            fontSize: 16,
+            borderRadius: 4,
+            border: "1px solid #ccc",
+            minWidth: 250
+          }}
+        >
+          <option value="">-- Select an Entity --</option>
+          {entities.map(entity => (
+            <option key={entity} value={entity}>{entity}</option>
+          ))}
+        </select>
+        
+        <span style={{ marginLeft: "auto", color: "#666" }}>
+          Total Properties: {rows.length}
+          {selectedEntity && <span style={{ color: "green", marginLeft: 10 }}>
+            | Showing: {markers.length} properties
+          </span>}
+        </span>
+      </div>
 
       <div id="map" style={{
         width: "100%",
