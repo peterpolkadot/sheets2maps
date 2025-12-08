@@ -228,6 +228,31 @@ export default function Home() {
     console.log("Filtered rows:", filteredRows.length, "Markers created:", newMarkers.length);
   }
 
+  // Handler functions that clear other dropdowns when one is selected
+  const handleEntityChange = (value) => {
+    setSelectedEntity(value);
+    if (value) {
+      setSelectedSiteName("");
+      setSelectedBuildingName("");
+    }
+  };
+
+  const handleSiteNameChange = (value) => {
+    setSelectedSiteName(value);
+    if (value) {
+      setSelectedEntity("");
+      setSelectedBuildingName("");
+    }
+  };
+
+  const handleBuildingNameChange = (value) => {
+    setSelectedBuildingName(value);
+    if (value) {
+      setSelectedEntity("");
+      setSelectedSiteName("");
+    }
+  };
+
   const clearFilters = () => {
     setSelectedEntity("");
     setSelectedSiteName("");
@@ -336,7 +361,7 @@ export default function Home() {
               </label>
               <select 
                 value={selectedEntity} 
-                onChange={(e) => setSelectedEntity(e.target.value)}
+                onChange={(e) => handleEntityChange(e.target.value)}
                 style={{
                   width: "100%",
                   padding: "12px 16px",
@@ -370,7 +395,7 @@ export default function Home() {
               </label>
               <select 
                 value={selectedSiteName} 
-                onChange={(e) => setSelectedSiteName(e.target.value)}
+                onChange={(e) => handleSiteNameChange(e.target.value)}
                 style={{
                   width: "100%",
                   padding: "12px 16px",
@@ -404,7 +429,7 @@ export default function Home() {
               </label>
               <select 
                 value={selectedBuildingName} 
-                onChange={(e) => setSelectedBuildingName(e.target.value)}
+                onChange={(e) => handleBuildingNameChange(e.target.value)}
                 style={{
                   width: "100%",
                   padding: "12px 16px",
