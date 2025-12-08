@@ -80,6 +80,11 @@ export default function Home() {
 
     const newInfoWindow = new google.maps.InfoWindow();
     
+    // Close info window when clicking on the map
+    newMap.addListener("click", () => {
+      newInfoWindow.close();
+    });
+    
     setMap(newMap);
     setInfoWindow(newInfoWindow);
     setMapLoaded(true);
