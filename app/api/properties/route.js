@@ -1,6 +1,11 @@
-import getExcelRows from "../../../lib/excel.js";
+import { NextResponse } from "next/server";
+import { getExcelRows } from "../../../../lib/excel";
 
 export async function GET() {
-  const rows = await getExcelRows();
-  return Response.json(rows);
+  try {
+    const rows = await getExcelRows();
+    return NextResponse.json(rows);
+  } catch (err) {
+    return NextResponse.json({ error: err.toString() }, { status: 500 });
+  }
 }
