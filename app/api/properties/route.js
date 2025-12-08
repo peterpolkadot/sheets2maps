@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getExcelRows } from "../../../../lib/excel";
+import { getExcelRows } from "../../../lib/excel";
 
 export async function GET() {
   try {
