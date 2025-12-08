@@ -4,11 +4,19 @@ import { useEffect, useState } from "react";
 
 export default function Home() {
   const [rows, setRows] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetch("/api/properties")
       .then(r => r.json())
-      .then(setRows);
+      .then(data => {
+        if (data.error) {
+          setError(data.error);
+        } else {
+          setRows(data);
+        }
+      })
+      .catch(err => setError(err.toString()));
   }, []);
 
   useEffect(() => {
@@ -23,6 +31,7 @@ export default function Home() {
       fetch("/api/properties")
         .then(r => r.json())
         .then(data => {
+          if (data.error) return;
           data.forEach(item => {
             if (!item.Coordinates) return;
             const parts = item.Coordinates.split(",");
@@ -43,6 +52,18 @@ export default function Home() {
   return (
     <div style={{ padding: 20 }}>
       <h1>Sheets2Maps – Connected Live to Excel</h1>
+      
+      {error && (
+        <div style={{ 
+          background: "#fee", 
+          padding: 20, 
+          marginBottom: 20,
+          border: "1px solid red"
+        }}>
+          <strong>Error:</strong> {error}
+        </div>
+      )}
+      
       <p style={{ marginBottom: 20 }}>Total Rows Loaded: {rows.length}</p>
 
       <pre style={{

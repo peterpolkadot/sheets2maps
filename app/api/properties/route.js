@@ -6,6 +6,10 @@ export async function GET() {
     const rows = await getExcelRows();
     return NextResponse.json(rows);
   } catch (err) {
-    return NextResponse.json({ error: err.toString() }, { status: 500 });
+    console.error("API Error:", err);
+    return NextResponse.json({ 
+      error: err.toString(),
+      stack: err.stack 
+    }, { status: 500 });
   }
 }
