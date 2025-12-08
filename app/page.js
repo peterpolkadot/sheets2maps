@@ -1,3 +1,4 @@
+"use client";
 
 import { useEffect, useState } from "react";
 
@@ -6,20 +7,16 @@ export default function Home() {
 
   useEffect(() => {
     fetch("/api/properties")
-      .then(res => res.json())
+      .then(r => r.json())
       .then(setRows);
   }, []);
 
   return (
     <div style={{ padding: 40 }}>
-      <h1>Sheets2Maps – Live Excel Data</h1>
-      <p>Total rows loaded: {rows.length}</p>
+      <h1>Sheets2Maps – Connected Mockup</h1>
+      <p>Total Rows Loaded: {rows.length}</p>
 
-      <ul>
-        {rows.map((r, i) => (
-          <li key={i}>{JSON.stringify(r)}</li>
-        ))}
-      </ul>
+      <pre>{JSON.stringify(rows.slice(0, 3), null, 2)}</pre>
     </div>
   );
 }

@@ -1,5 +1,4 @@
-
-import { getExcelRows } from "@/lib/excel";
+import getExcelRows from "../../../lib/excel.js";
 
 export async function GET() {
   const rows = await getExcelRows();
