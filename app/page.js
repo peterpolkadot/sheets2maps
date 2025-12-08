@@ -80,7 +80,6 @@ export default function Home() {
 
     const newInfoWindow = new google.maps.InfoWindow();
     
-    // Close info window when clicking on the map
     newMap.addListener("click", () => {
       newInfoWindow.close();
     });
@@ -90,24 +89,89 @@ export default function Home() {
     setMapLoaded(true);
   }
 
+  function createBuildingContent(item, index, totalBuildings) {
+    return `
+      <div id="building-${index}" class="building-content" style="display: ${index === 0 ? 'block' : 'none'};">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Entity</div>
+            <div style="color: #1e293b; font-size: 14px;">${item["Entity"] || "N/A"}</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">AVR ID</div>
+            <div style="color: #1e293b; font-size: 14px;">${item["AVR ID"] || "N/A"}</div>
+          </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); padding: 14px; border-radius: 8px; margin-bottom: 16px;">
+          <div style="font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 600; margin-bottom: 6px;">
+            📍 Address
+          </div>
+          <div style="color: #1e293b; font-size: 14px; line-height: 1.5;">
+            ${item["Street"] || ""}<br>
+            ${item["Suburb / Town"] || ""}, ${item["State"] || ""} ${item["Post Code"] || ""}
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Site Use</div>
+            <div style="color: #1e293b; font-size: 14px;">${item["Site Use"] || "N/A"}</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Occupancy</div>
+            <div style="color: #1e293b; font-size: 14px;">${item["Occupancy"] || "N/A"}</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Built</div>
+            <div style="color: #1e293b; font-size: 14px;">${item["Construction Year"] || "N/A"}</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Area</div>
+            <div style="color: #1e293b; font-size: 14px;">${item["Gross Building Area"] || "N/A"} m²</div>
+          </div>
+        </div>
+
+        <div style="background: #f0fdf4; padding: 14px; border-radius: 8px; border-left: 4px solid #10b981;">
+          <div style="font-size: 11px; color: #065f46; text-transform: uppercase; font-weight: 600; margin-bottom: 6px;">
+            💰 Recommended Sum Insured
+          </div>
+          <div style="font-size: 24px; font-weight: 700; color: #059669; margin-bottom: 4px;">
+            ${formatCurrency(item["Recommended Sum Insured ($)"])}
+          </div>
+          <div style="font-size: 12px; color: #059669;">
+            Reinstatement: ${formatCurrency(item["Reinstatement Cost\n($)"])}
+          </div>
+        </div>
+
+        ${item["Valuer Comments"] && item["Valuer Comments"] !== 0 ? `
+          <div style="margin-top: 16px; padding: 12px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <div style="font-size: 11px; color: #92400e; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">
+              💬 Comments
+            </div>
+            <div style="font-size: 13px; color: #78350f;">
+              ${item["Valuer Comments"]}
+            </div>
+          </div>
+        ` : ""}
+      </div>
+    `;
+  }
+
   function updateMarkers() {
-    // Clear existing markers
     markers.forEach(marker => marker.setMap(null));
     
     if (infoWindow) {
       infoWindow.close();
     }
 
-    // If no filters are active, don't show any markers
     if (!selectedEntity && !selectedSiteName && !selectedBuildingName) {
       setMarkers([]);
       return;
     }
 
-    // Start with all rows
     let filteredRows = rows;
     
-    // Apply each filter ONLY if it has a value selected
     if (selectedEntity) {
       filteredRows = filteredRows.filter(item => item.Entity === selectedEntity);
     }
@@ -120,108 +184,123 @@ export default function Home() {
       filteredRows = filteredRows.filter(item => item["Building Name"] === selectedBuildingName);
     }
     
-    const newMarkers = [];
-
+    // Group by coordinates (site location)
+    const groupedByLocation = {};
+    
     filteredRows.forEach(item => {
       if (!item.Coordinates) return;
-      
       const coords = item.Coordinates.replace(/\s+/g, "");
-      const parts = coords.split(",");
       
+      if (!groupedByLocation[coords]) {
+        groupedByLocation[coords] = [];
+      }
+      groupedByLocation[coords].push(item);
+    });
+    
+    const newMarkers = [];
+
+    Object.entries(groupedByLocation).forEach(([coords, buildings]) => {
+      const parts = coords.split(",");
       const lat = parseFloat(parts[0]);
       const lng = parseFloat(parts[1]);
       
       if (isNaN(lat) || isNaN(lng)) {
-        console.log("Invalid coords for:", item["Site Name"]);
+        console.log("Invalid coords:", coords);
         return;
       }
 
       const marker = new google.maps.Marker({
         position: { lat, lng },
         map,
-        title: item["Site Name"] || "Property",
-        animation: google.maps.Animation.DROP
+        title: buildings[0]["Site Name"] || "Property",
+        animation: google.maps.Animation.DROP,
+        label: buildings.length > 1 ? String(buildings.length) : ""
       });
 
-      const contentHTML = `
-        <div style="max-width: 420px; font-family: 'Inter', sans-serif; line-height: 1.6;">
+      const siteName = buildings[0]["Site Name"] || "Property";
+      
+      // Create tabs if multiple buildings
+      let tabsHTML = "";
+      let contentHTML = "";
+      
+      if (buildings.length > 1) {
+        tabsHTML = `
+          <div style="display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; overflow-x: auto;">
+            ${buildings.map((building, index) => `
+              <button 
+                onclick="window.switchTab(${index}, ${buildings.length})"
+                id="tab-${index}"
+                style="
+                  padding: 10px 16px;
+                  background: ${index === 0 ? '#2563eb' : 'transparent'};
+                  color: ${index === 0 ? 'white' : '#64748b'};
+                  border: none;
+                  border-bottom: 2px solid ${index === 0 ? '#2563eb' : 'transparent'};
+                  cursor: pointer;
+                  font-size: 13px;
+                  font-weight: 600;
+                  white-space: nowrap;
+                  transition: all 0.2s;
+                "
+              >
+                ${building["Building Name"] || "Building " + (index + 1)}
+              </button>
+            `).join('')}
+          </div>
+        `;
+        
+        contentHTML = buildings.map((building, index) => 
+          createBuildingContent(building, index, buildings.length)
+        ).join('');
+      } else {
+        contentHTML = createBuildingContent(buildings[0], 0, 1);
+      }
+
+      const fullHTML = `
+        <div style="max-width: 450px; font-family: 'Inter', sans-serif; line-height: 1.6;">
           <div style="border-bottom: 3px solid #2563eb; padding-bottom: 12px; margin-bottom: 16px;">
             <h3 style="margin: 0; color: #1e293b; font-size: 18px; font-weight: 600;">
-              ${item["Site Name"] || "Property"}
+              ${siteName}
             </h3>
-            <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">
-              ${item["Building Name"] || ""}
-            </p>
+            ${buildings.length > 1 ? `
+              <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">
+                ${buildings.length} Buildings at this location
+              </p>
+            ` : `
+              <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">
+                ${buildings[0]["Building Name"] || ""}
+              </p>
+            `}
           </div>
           
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-            <div>
-              <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Entity</div>
-              <div style="color: #1e293b; font-size: 14px;">${item["Entity"] || "N/A"}</div>
-            </div>
-            <div>
-              <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">AVR ID</div>
-              <div style="color: #1e293b; font-size: 14px;">${item["AVR ID"] || "N/A"}</div>
-            </div>
-          </div>
-
-          <div style="background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); padding: 14px; border-radius: 8px; margin-bottom: 16px;">
-            <div style="font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 600; margin-bottom: 6px;">
-              📍 Address
-            </div>
-            <div style="color: #1e293b; font-size: 14px; line-height: 1.5;">
-              ${item["Street"] || ""}<br>
-              ${item["Suburb / Town"] || ""}, ${item["State"] || ""} ${item["Post Code"] || ""}
-            </div>
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-            <div>
-              <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Site Use</div>
-              <div style="color: #1e293b; font-size: 14px;">${item["Site Use"] || "N/A"}</div>
-            </div>
-            <div>
-              <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Occupancy</div>
-              <div style="color: #1e293b; font-size: 14px;">${item["Occupancy"] || "N/A"}</div>
-            </div>
-            <div>
-              <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Built</div>
-              <div style="color: #1e293b; font-size: 14px;">${item["Construction Year"] || "N/A"}</div>
-            </div>
-            <div>
-              <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Area</div>
-              <div style="color: #1e293b; font-size: 14px;">${item["Gross Building Area"] || "N/A"} m²</div>
-            </div>
-          </div>
-
-          <div style="background: #f0fdf4; padding: 14px; border-radius: 8px; border-left: 4px solid #10b981;">
-            <div style="font-size: 11px; color: #065f46; text-transform: uppercase; font-weight: 600; margin-bottom: 6px;">
-              💰 Recommended Sum Insured
-            </div>
-            <div style="font-size: 24px; font-weight: 700; color: #059669; margin-bottom: 4px;">
-              ${formatCurrency(item["Recommended Sum Insured ($)"])}
-            </div>
-            <div style="font-size: 12px; color: #059669;">
-              Reinstatement: ${formatCurrency(item["Reinstatement Cost\n($)"])}
-            </div>
-          </div>
-
-          ${item["Valuer Comments"] && item["Valuer Comments"] !== 0 ? `
-            <div style="margin-top: 16px; padding: 12px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
-              <div style="font-size: 11px; color: #92400e; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">
-                💬 Comments
-              </div>
-              <div style="font-size: 13px; color: #78350f;">
-                ${item["Valuer Comments"]}
-              </div>
-            </div>
-          ` : ""}
+          ${tabsHTML}
+          ${contentHTML}
         </div>
       `;
 
+      // Define the switchTab function globally
+      window.switchTab = function(tabIndex, totalTabs) {
+        for (let i = 0; i < totalTabs; i++) {
+          const tab = document.getElementById(`tab-${i}`);
+          const content = document.getElementById(`building-${i}`);
+          
+          if (i === tabIndex) {
+            tab.style.background = '#2563eb';
+            tab.style.color = 'white';
+            tab.style.borderBottom = '2px solid #2563eb';
+            content.style.display = 'block';
+          } else {
+            tab.style.background = 'transparent';
+            tab.style.color = '#64748b';
+            tab.style.borderBottom = '2px solid transparent';
+            content.style.display = 'none';
+          }
+        }
+      };
+
       marker.addListener("click", () => {
         infoWindow.close();
-        infoWindow.setContent(contentHTML);
+        infoWindow.setContent(fullHTML);
         infoWindow.open(map, marker);
       });
       
@@ -229,11 +308,9 @@ export default function Home() {
     });
 
     setMarkers(newMarkers);
-    console.log("Filters:", { selectedEntity, selectedSiteName, selectedBuildingName });
-    console.log("Filtered rows:", filteredRows.length, "Markers created:", newMarkers.length);
+    console.log("Markers created:", newMarkers.length);
   }
 
-  // Handler functions that clear other dropdowns when one is selected
   const handleEntityChange = (value) => {
     setSelectedEntity(value);
     if (value) {
@@ -471,7 +548,7 @@ export default function Home() {
             </span>
             {hasActiveFilters && (
               <span style={{ color: "#10b981", fontWeight: 600 }}>
-                • Showing: {markers.length}
+                • Showing: {markers.length} locations
               </span>
             )}
           </div>
