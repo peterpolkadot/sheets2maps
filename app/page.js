@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
-  const [debug, setDebug] = useState(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
     fetch("/api/properties")
@@ -13,7 +13,6 @@ export default function Home() {
       .then(data => {
         if (data.error) {
           setError(data.error);
-          setDebug(data.debug);
         } else {
           setRows(data);
         }
@@ -22,38 +21,57 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (rows.length === 0) return;
 
-    window.initMap = function () {
-      const map = new google.maps.Map(document.getElementById("map"), {
-        zoom: 5,
-        center: { lat: -25.2744, lng: 133.7751 }
+    const checkGoogleMaps = setInterval(() => {
+      if (typeof google !== "undefined" && google.maps) {
+        clearInterval(checkGoogleMaps);
+        initMap();
+      }
+    }, 100);
+
+    return () => clearInterval(checkGoogleMaps);
+  }, [rows]);
+
+  function initMap() {
+    const map = new google.maps.Map(document.getElementById("map"), {
+      zoom: 6,
+      center: { lat: -37.8136, lng: 144.9631 } // Melbourne center
+    });
+
+    let markersAdded = 0;
+
+    rows.forEach(item => {
+      if (!item.Coordinates) return;
+      
+      // Handle coordinates with or without spaces after comma
+      const coords = item.Coordinates.replace(/\s+/g, "");
+      const parts = coords.split(",");
+      
+      const lat = parseFloat(parts[0]);
+      const lng = parseFloat(parts[1]);
+      
+      if (isNaN(lat) || isNaN(lng)) {
+        console.log("Invalid coords for:", item["Site Name"], lat, lng);
+        return;
+      }
+
+      new google.maps.Marker({
+        position: { lat, lng },
+        map,
+        title: item["Site Name"] || "Property"
       });
+      
+      markersAdded++;
+    });
 
-      fetch("/api/properties")
-        .then(r => r.json())
-        .then(data => {
-          if (data.error) return;
-          data.forEach(item => {
-            if (!item.Coordinates) return;
-            const parts = item.Coordinates.split(",");
-            const lat = parseFloat(parts[0]);
-            const lng = parseFloat(parts[1]);
-            if (isNaN(lat) || isNaN(lng)) return;
-
-            new google.maps.Marker({
-              position: { lat, lng },
-              map,
-              title: item["Site Name"] || "Property"
-            });
-          });
-        });
-    };
-  }, []);
+    console.log("Markers added:", markersAdded);
+    setMapLoaded(true);
+  }
 
   return (
     <div style={{ padding: 20 }}>
-      <h1>Sheets2Maps – Connected Live to Excel</h1>
+      <h1>Sheets2Maps – Catholic Diocese Properties</h1>
       
       {error && (
         <div style={{ 
@@ -63,37 +81,35 @@ export default function Home() {
           border: "1px solid red"
         }}>
           <strong>Error:</strong> {error}
-          {debug && (
-            <pre style={{ marginTop: 10, fontSize: 12 }}>
-              {JSON.stringify(debug, null, 2)}
-            </pre>
-          )}
         </div>
       )}
       
-      <p style={{ marginBottom: 20 }}>Total Rows Loaded: {rows.length}</p>
-
-      <pre style={{
-        background: "#eee",
-        padding: 20,
-        maxHeight: 200,
-        overflow: "auto"
-      }}>
-{JSON.stringify(rows, null, 2)}
-      </pre>
+      <p style={{ marginBottom: 20 }}>
+        Total Properties Loaded: {rows.length}
+        {mapLoaded && <span style={{ color: "green", marginLeft: 20 }}>✓ Map Loaded</span>}
+      </p>
 
       <div id="map" style={{
         width: "100%",
-        height: "70vh",
-        marginTop: 20,
-        border: "1px solid #ccc"
+        height: "600px",
+        marginBottom: 20,
+        border: "2px solid #333"
       }}></div>
 
-      <script async src={
-        "https://maps.googleapis.com/maps/api/js?key=" +
-        process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY +
-        "&callback=initMap"
-      }></script>
+      <details>
+        <summary style={{ cursor: "pointer", fontWeight: "bold", marginBottom: 10 }}>
+          View Raw Data ({rows.length} properties)
+        </summary>
+        <pre style={{
+          background: "#eee",
+          padding: 20,
+          maxHeight: 400,
+          overflow: "auto",
+          fontSize: 12
+        }}>
+{JSON.stringify(rows, null, 2)}
+        </pre>
+      </details>
     </div>
   );
 }
