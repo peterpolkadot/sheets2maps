@@ -1,7 +1,8 @@
 export const metadata = {
   title: "Sheets2Maps",
-  description: "Single page mockup"
+  description: "Static mockup"
 };
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
