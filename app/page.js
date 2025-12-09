@@ -142,17 +142,19 @@ export default function Home() {
           </div>
         </div>
 
-        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);">
-          <div style="font-size: 11px; color: rgba(255,255,255,0.9); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 10px;">
-            💰 Recommended Sum Insured
-          </div>
-          <div style="font-size: 32px; font-weight: 800; color: white; margin-bottom: 8px; letter-spacing: -0.5px;">
-            ${formatCurrency(item["Recommended Sum Insured ($)"])}
-          </div>
-          <div style="font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 500;">
-            Reinstatement: ${formatCurrency(item["Reinstatement Cost\n($)"])}
-          </div>
-        </div>
+<div style="background: #f8fafc; padding: 16px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 16px;">
+  <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">
+    Recommended Sum Insured
+  </div>
+  <div style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">
+    ${formatCurrency(item["Recommended Sum Insured ($)"])}
+  </div>
+
+  <div style="font-size: 13px; color: #475569; font-weight: 500;">
+    Reinstatement: ${formatCurrency(item["Reinstatement Cost\n($)"])}
+  </div>
+</div>
+
 
         ${item["Valuer Comments"] && item["Valuer Comments"] !== 0 ? `
           <div style="margin-top: 16px; padding: 14px; background: #fffbeb; border-radius: 6px; border-left: 3px solid #f59e0b;">
