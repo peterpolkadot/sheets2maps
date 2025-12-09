@@ -100,17 +100,7 @@ export default function Home() {
     return `
       <div id="building-${index}" class="building-content" style="display: ${index === 0 ? 'block' : 'none'};">
         
-        <div style="background: #f8fafc; padding: 16px; border-radius: 6px; margin-bottom: 16px; border-left: 3px solid #3b82f6;">
-          <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px;">
-            📍 Address
-          </div>
-          <div style="color: #0f172a; font-size: 15px; line-height: 1.6; font-weight: 500;">
-            ${item["Street"] || ""}
-          </div>
-          <div style="color: #475569; font-size: 14px; margin-top: 2px;">
-            ${item["Suburb / Town"] || ""}, ${item["State"] || ""} ${item["Post Code"] || ""}
-          </div>
-        </div>
+
 
 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
   <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
