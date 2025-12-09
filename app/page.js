@@ -10,10 +10,12 @@ export default function Home() {
   const [entities, setEntities] = useState([]);
   const [siteNames, setSiteNames] = useState([]);
   const [buildingNames, setBuildingNames] = useState([]);
+  const [suburbs, setSuburbs] = useState([]);
   
   const [selectedEntity, setSelectedEntity] = useState("");
   const [selectedSiteName, setSelectedSiteName] = useState("");
   const [selectedBuildingName, setSelectedBuildingName] = useState("");
+  const [selectedSuburb, setSelectedSuburb] = useState("");
   
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
@@ -36,6 +38,9 @@ export default function Home() {
           
           const uniqueBuildingNames = [...new Set(data.map(item => item["Building Name"]).filter(Boolean))];
           setBuildingNames(uniqueBuildingNames.sort());
+          
+          const uniqueSuburbs = [...new Set(data.map(item => item["Suburb / Town"]).filter(Boolean))];
+          setSuburbs(uniqueSuburbs.sort());
         }
       })
       .catch(err => setError(err.toString()));
@@ -56,7 +61,7 @@ export default function Home() {
     if (map && rows.length > 0) {
       updateMarkers();
     }
-  }, [selectedEntity, selectedSiteName, selectedBuildingName, map, rows]);
+  }, [selectedEntity, selectedSiteName, selectedBuildingName, selectedSuburb, map, rows]);
 
   function formatCurrency(value) {
     if (!value || value === 0) return "N/A";
@@ -166,7 +171,7 @@ export default function Home() {
       infoWindow.close();
     }
 
-    if (!selectedEntity && !selectedSiteName && !selectedBuildingName) {
+    if (!selectedEntity && !selectedSiteName && !selectedBuildingName && !selectedSuburb) {
       setMarkers([]);
       return;
     }
@@ -183,6 +188,10 @@ export default function Home() {
     
     if (selectedBuildingName) {
       filteredRows = filteredRows.filter(item => item["Building Name"] === selectedBuildingName);
+    }
+    
+    if (selectedSuburb) {
+      filteredRows = filteredRows.filter(item => item["Suburb / Town"] === selectedSuburb);
     }
     
     const groupedBySite = {};
@@ -323,6 +332,7 @@ export default function Home() {
     if (value) {
       setSelectedSiteName("");
       setSelectedBuildingName("");
+      setSelectedSuburb("");
     }
   };
 
@@ -331,6 +341,7 @@ export default function Home() {
     if (value) {
       setSelectedEntity("");
       setSelectedBuildingName("");
+      setSelectedSuburb("");
     }
   };
 
@@ -339,6 +350,16 @@ export default function Home() {
     if (value) {
       setSelectedEntity("");
       setSelectedSiteName("");
+      setSelectedSuburb("");
+    }
+  };
+
+  const handleSuburbChange = (value) => {
+    setSelectedSuburb(value);
+    if (value) {
+      setSelectedEntity("");
+      setSelectedSiteName("");
+      setSelectedBuildingName("");
     }
   };
 
@@ -346,9 +367,10 @@ export default function Home() {
     setSelectedEntity("");
     setSelectedSiteName("");
     setSelectedBuildingName("");
+    setSelectedSuburb("");
   };
 
-  const hasActiveFilters = selectedEntity || selectedSiteName || selectedBuildingName;
+  const hasActiveFilters = selectedEntity || selectedSiteName || selectedBuildingName || selectedSuburb;
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fa" }}>
@@ -433,7 +455,7 @@ export default function Home() {
 
           <div style={{ 
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
             gap: 16
           }}>
             <div>
@@ -466,6 +488,40 @@ export default function Home() {
                 <option value="">All Entities</option>
                 {entities.map(entity => (
                   <option key={entity} value={entity}>{entity}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label style={{ 
+                display: "block",
+                marginBottom: 8,
+                fontSize: 13,
+                fontWeight: 600,
+                color: "#475569",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>
+                Suburb / Town
+              </label>
+              <select 
+                value={selectedSuburb} 
+                onChange={(e) => handleSuburbChange(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  fontSize: 15,
+                  borderRadius: 8,
+                  border: "2px solid #e2e8f0",
+                  background: "white",
+                  cursor: "pointer",
+                  transition: "border-color 0.2s",
+                  outline: "none"
+                }}
+              >
+                <option value="">All Suburbs</option>
+                {suburbs.map(suburb => (
+                  <option key={suburb} value={suburb}>{suburb}</option>
                 ))}
               </select>
             </div>
