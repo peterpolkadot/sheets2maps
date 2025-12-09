@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
 
           .gm-style-iw-c {
             padding: 0 !important;
-            max-width: 600px !important;
+            max-width: min(600px, 90vw) !important;
             max-height: 500px !important;
             overflow: visible !important;
           }
@@ -97,9 +97,15 @@ export default function RootLayout({ children }) {
           }
 
           .iw-content {
-            padding: 22px;
+            padding: 16px;
             background: #f8fcff;
             overflow-y: auto;
+          }
+
+          @media (min-width: 640px) {
+            .iw-content {
+              padding: 22px;
+            }
           }
 
           .building-content {
@@ -112,9 +118,16 @@ export default function RootLayout({ children }) {
 
           .field-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
+            grid-template-columns: 1fr;
+            gap: 12px;
             margin-bottom: 16px;
+          }
+
+          @media (min-width: 480px) {
+            .field-grid {
+              grid-template-columns: 1fr 1fr;
+              gap: 14px;
+            }
           }
 
           .field-box {
