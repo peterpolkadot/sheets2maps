@@ -402,15 +402,7 @@ export default function Home() {
             justifyContent: "space-between",
             marginBottom: 20
           }}>
-            <h2 style={{ 
-              margin: 0, 
-              fontSize: 20, 
-              fontWeight: 700,
-              color: "#006a8e",
-              letterSpacing: "-0.3px"
-            }}>
-              Filter Properties
-            </h2>
+      
             {hasActiveFilters && (
               <button
                 onClick={clearFilters}
