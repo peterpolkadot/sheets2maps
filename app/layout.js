@@ -36,9 +36,9 @@ export default function RootLayout({ children }) {
 
           /* InfoWindow Styles */
           .iw-header {
-            padding: 14px 20px;
-            background: #f8fafc;
-            border-bottom: 1px solid #e2e8f0;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #006a8e 0%, #008bb3 100%);
+            border-bottom: none;
             position: sticky;
             top: 0;
             z-index: 10;
@@ -46,16 +46,16 @@ export default function RootLayout({ children }) {
 
           .iw-title {
             margin: 0;
-            font-size: 16px;
+            font-size: 17px;
             font-weight: 700;
-            color: #0f172a;
+            color: white;
             letter-spacing: -0.2px;
           }
 
           .iw-subtitle {
             margin: 4px 0 0 0;
             font-size: 13px;
-            color: #475569;
+            color: rgba(255, 255, 255, 0.9);
             font-weight: 500;
           }
 
@@ -63,7 +63,7 @@ export default function RootLayout({ children }) {
             display: flex;
             gap: 0;
             border-bottom: 2px solid #e2e8f0;
-            background: #f8fafc;
+            background: #f0f9ff;
             position: sticky;
             top: 0;
             z-index: 10;
@@ -86,21 +86,22 @@ export default function RootLayout({ children }) {
 
           .iw-tab.active {
             background: white;
-            color: #3b82f6;
-            border-bottom-color: #3b82f6;
+            color: #006a8e;
+            border-bottom-color: #006a8e;
           }
 
           .iw-tab:not(.active) {
-            background: #f8fafc;
+            background: #f0f9ff;
             color: #64748b;
           }
 
           .iw-tab:not(.active):hover {
-            background: #f1f5f9;
+            background: #e0f2fe;
           }
 
           .iw-content {
             padding: 22px;
+            background: #f8fcff;
             overflow-y: auto;
           }
 
@@ -121,9 +122,9 @@ export default function RootLayout({ children }) {
 
           .field-box {
             padding: 12px;
-            background: #f8fafc;
+            background: white;
             border-radius: 6px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #e0f2fe;
           }
 
           .field-label {
@@ -142,9 +143,9 @@ export default function RootLayout({ children }) {
           }
 
           .field-value-large {
-            color: #0f172a;
+            color: #006a8e;
             font-size: 14px;
-            font-weight: 600;
+            font-weight: 700;
           }
 
           .comments-box {
