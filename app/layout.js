@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
 
           .gm-style-iw-c {
             padding: 0 !important;
-            max-width: min(600px, 90vw) !important;
+            max-width: min(420px, 90vw) !important;
             max-height: 500px !important;
             overflow: visible !important;
           }
@@ -98,7 +98,7 @@ export default function RootLayout({ children }) {
 
           .iw-content {
             padding: 16px;
-            background: #f8fcff;
+            background: #fafbfc;
             overflow-y: auto;
           }
 
