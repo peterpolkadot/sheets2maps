@@ -84,7 +84,7 @@ export default function Home() {
     });
 
     const newInfoWindow = new google.maps.InfoWindow({
-      maxWidth: 550
+      maxWidth: 600
     });
     
     newMap.addListener("click", () => {

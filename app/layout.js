@@ -18,15 +18,15 @@ export default function RootLayout({ children }) {
           }
 
           .gm-style-iw-d {
-            overflow: hidden !important;
+            overflow: auto !important;
             max-width: none !important;
-            max-height: none !important;
+            max-height: 500px !important;
           }
 
           .gm-style-iw-c {
             padding: 0 !important;
-            max-width: 720px !important;
-            max-height: none !important;
+            max-width: 600px !important;
+            max-height: 500px !important;
             overflow: visible !important;
           }
 
@@ -39,6 +39,9 @@ export default function RootLayout({ children }) {
             padding: 14px 20px;
             background: #f8fafc;
             border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
           }
 
           .iw-title {
@@ -61,6 +64,9 @@ export default function RootLayout({ children }) {
             gap: 0;
             border-bottom: 2px solid #e2e8f0;
             background: #f8fafc;
+            position: sticky;
+            top: 0;
+            z-index: 10;
           }
 
           .iw-tab {
@@ -95,6 +101,7 @@ export default function RootLayout({ children }) {
 
           .iw-content {
             padding: 22px;
+            overflow-y: auto;
           }
 
           .building-content {
