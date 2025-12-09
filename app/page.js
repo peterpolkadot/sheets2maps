@@ -83,7 +83,9 @@ export default function Home() {
       ]
     });
 
-    const newInfoWindow = new google.maps.InfoWindow();
+    const newInfoWindow = new google.maps.InfoWindow({
+      maxWidth: 480
+    });
     
     newMap.addListener("click", () => {
       newInfoWindow.close();
@@ -98,64 +100,66 @@ export default function Home() {
     return `
       <div id="building-${index}" class="building-content" style="display: ${index === 0 ? 'block' : 'none'};">
         
-        <div style="background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); padding: 14px; border-radius: 8px; margin-bottom: 16px;">
-          <div style="font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 600; margin-bottom: 6px;">
+        <div style="background: #f8fafc; padding: 16px; border-radius: 6px; margin-bottom: 16px; border-left: 3px solid #3b82f6;">
+          <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 8px;">
             📍 Address
           </div>
-          <div style="color: #1e293b; font-size: 14px; line-height: 1.5;">
-            ${item["Street"] || ""}<br>
+          <div style="color: #0f172a; font-size: 15px; line-height: 1.6; font-weight: 500;">
+            ${item["Street"] || ""}
+          </div>
+          <div style="color: #475569; font-size: 14px; margin-top: 2px;">
             ${item["Suburb / Town"] || ""}, ${item["State"] || ""} ${item["Post Code"] || ""}
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-          <div>
-            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Site Use</div>
-            <div style="color: #1e293b; font-size: 14px;">${item["Site Use"] || "N/A"}</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+          <div style="background: #fefce8; padding: 12px; border-radius: 6px;">
+            <div style="font-size: 10px; color: #854d0e; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Site Use</div>
+            <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${item["Site Use"] || "N/A"}</div>
           </div>
-          <div>
-            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Occupancy</div>
-            <div style="color: #1e293b; font-size: 14px;">${item["Occupancy"] || "N/A"}</div>
+          <div style="background: #f0f9ff; padding: 12px; border-radius: 6px;">
+            <div style="font-size: 10px; color: #075985; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Occupancy</div>
+            <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${item["Occupancy"] || "N/A"}</div>
           </div>
-          <div>
-            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Built</div>
-            <div style="color: #1e293b; font-size: 14px;">${item["Construction Year"] || "N/A"}</div>
+          <div style="background: #fef2f2; padding: 12px; border-radius: 6px;">
+            <div style="font-size: 10px; color: #991b1b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Built</div>
+            <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${item["Construction Year"] || "N/A"}</div>
           </div>
-          <div>
-            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Area</div>
-            <div style="color: #1e293b; font-size: 14px;">${item["Gross Building Area"] || "N/A"} m²</div>
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-          <div>
-            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Entity</div>
-            <div style="color: #1e293b; font-size: 14px;">${item["Entity"] || "N/A"}</div>
-          </div>
-          <div>
-            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">AVR ID</div>
-            <div style="color: #1e293b; font-size: 14px;">${item["AVR ID"] || "N/A"}</div>
+          <div style="background: #f5f3ff; padding: 12px; border-radius: 6px;">
+            <div style="font-size: 10px; color: #5b21b6; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Area</div>
+            <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${item["Gross Building Area"] || "N/A"} m²</div>
           </div>
         </div>
 
-        <div style="background: #f0fdf4; padding: 14px; border-radius: 8px; border-left: 4px solid #10b981;">
-          <div style="font-size: 11px; color: #065f46; text-transform: uppercase; font-weight: 600; margin-bottom: 6px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+          <div style="padding: 12px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+            <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Entity</div>
+            <div style="color: #0f172a; font-size: 13px; font-weight: 600;">${item["Entity"] || "N/A"}</div>
+          </div>
+          <div style="padding: 12px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
+            <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">AVR ID</div>
+            <div style="color: #0f172a; font-size: 13px; font-weight: 600;">${item["AVR ID"] || "N/A"}</div>
+          </div>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 18px; border-radius: 8px; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);">
+          <div style="font-size: 11px; color: rgba(255,255,255,0.9); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 8px;">
             💰 Recommended Sum Insured
           </div>
-          <div style="font-size: 24px; font-weight: 700; color: #059669; margin-bottom: 4px;">
+          <div style="font-size: 28px; font-weight: 800; color: white; margin-bottom: 6px; letter-spacing: -0.5px;">
             ${formatCurrency(item["Recommended Sum Insured ($)"])}
           </div>
-          <div style="font-size: 12px; color: #059669;">
+          <div style="font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 500;">
             Reinstatement: ${formatCurrency(item["Reinstatement Cost\n($)"])}
           </div>
         </div>
 
         ${item["Valuer Comments"] && item["Valuer Comments"] !== 0 ? `
-          <div style="margin-top: 16px; padding: 12px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
-            <div style="font-size: 11px; color: #92400e; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">
-              💬 Comments
+          <div style="margin-top: 16px; padding: 14px; background: #fffbeb; border-radius: 6px; border-left: 3px solid #f59e0b;">
+            <div style="font-size: 10px; color: #92400e; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">
+              💬 Valuer Comments
             </div>
-            <div style="font-size: 13px; color: #78350f;">
+            <div style="font-size: 13px; color: #78350f; line-height: 1.5;">
               ${item["Valuer Comments"]}
             </div>
           </div>
@@ -240,26 +244,29 @@ export default function Home() {
       
       if (buildings.length > 1) {
         tabsHTML = `
-          <div style="display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 2px solid #e2e8f0; overflow-x: auto;">
+          <div style="display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; background: #f8fafc;">
             ${buildings.map((building, index) => `
               <button 
                 onclick="window.switchTab(${index}, ${buildings.length})"
                 id="tab-${index}"
                 style="
-                  padding: 10px 16px;
-                  background: ${index === 0 ? '#2563eb' : 'transparent'};
-                  color: ${index === 0 ? 'white' : '#64748b'};
+                  flex: 1;
+                  padding: 14px 20px;
+                  background: ${index === 0 ? 'white' : '#f8fafc'};
+                  color: ${index === 0 ? '#3b82f6' : '#64748b'};
                   border: none;
-                  border-bottom: 2px solid ${index === 0 ? '#2563eb' : 'transparent'};
+                  border-bottom: 3px solid ${index === 0 ? '#3b82f6' : 'transparent'};
                   cursor: pointer;
                   font-size: 13px;
-                  font-weight: 600;
+                  font-weight: 700;
                   white-space: nowrap;
                   transition: all 0.2s;
                   font-family: 'Inter', sans-serif;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
                 "
-                onmouseover="if(this.id !== 'tab-0' || document.getElementById('building-0').style.display === 'none') { this.style.background = '#e2e8f0'; }"
-                onmouseout="if(document.getElementById('building-${index}').style.display === 'none') { this.style.background = 'transparent'; } else { this.style.background = '#2563eb'; }"
+                onmouseover="if(document.getElementById('building-${index}').style.display === 'none') { this.style.background = '#f1f5f9'; }"
+                onmouseout="if(document.getElementById('building-${index}').style.display === 'none') { this.style.background = '#f8fafc'; } else { this.style.background = 'white'; }"
               >
                 ${building["Building Name"] || "Building " + (index + 1)}
               </button>
@@ -275,24 +282,27 @@ export default function Home() {
       }
 
       const fullHTML = `
-        <div style="max-width: 450px; font-family: 'Inter', sans-serif; line-height: 1.6;">
-          <div style="border-bottom: 3px solid #2563eb; padding-bottom: 12px; margin-bottom: 16px;">
-            <h3 style="margin: 0; color: #1e293b; font-size: 18px; font-weight: 600;">
+        <div style="font-family: 'Inter', sans-serif; line-height: 1.6; min-width: 460px;">
+          <div style="padding: 18px 20px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;">
+            <h3 style="margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.3px;">
               ${siteName}
             </h3>
             ${buildings.length > 1 ? `
-              <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">
+              <p style="margin: 6px 0 0 0; font-size: 13px; opacity: 0.95; font-weight: 500;">
                 ${buildings.length} Buildings at this site
               </p>
             ` : `
-              <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">
+              <p style="margin: 6px 0 0 0; font-size: 14px; opacity: 0.95; font-weight: 500;">
                 ${buildings[0]["Building Name"] || ""}
               </p>
             `}
           </div>
           
           ${tabsHTML}
-          ${contentHTML}
+          
+          <div style="padding: 20px;">
+            ${contentHTML}
+          </div>
         </div>
       `;
 
@@ -302,14 +312,14 @@ export default function Home() {
           const content = document.getElementById(`building-${i}`);
           
           if (i === tabIndex) {
-            tab.style.background = '#2563eb';
-            tab.style.color = 'white';
-            tab.style.borderBottom = '2px solid #2563eb';
+            tab.style.background = 'white';
+            tab.style.color = '#3b82f6';
+            tab.style.borderBottom = '3px solid #3b82f6';
             content.style.display = 'block';
           } else {
-            tab.style.background = 'transparent';
+            tab.style.background = '#f8fafc';
             tab.style.color = '#64748b';
-            tab.style.borderBottom = '2px solid transparent';
+            tab.style.borderBottom = '3px solid transparent';
             content.style.display = 'none';
           }
         }
