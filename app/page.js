@@ -184,41 +184,51 @@ export default function Home() {
       filteredRows = filteredRows.filter(item => item["Building Name"] === selectedBuildingName);
     }
     
-    // Group by coordinates (site location)
-    const groupedByLocation = {};
+    // Group by Site Name (not coordinates) to handle multiple buildings at same site
+    const groupedBySite = {};
     
     filteredRows.forEach(item => {
-      if (!item.Coordinates) return;
-      const coords = item.Coordinates.replace(/\s+/g, "");
+      const siteName = item["Site Name"];
+      if (!siteName) return;
       
-      if (!groupedByLocation[coords]) {
-        groupedByLocation[coords] = [];
+      if (!groupedBySite[siteName]) {
+        groupedBySite[siteName] = [];
       }
-      groupedByLocation[coords].push(item);
+      groupedBySite[siteName].push(item);
     });
+    
+    console.log("Grouped by site:", groupedBySite);
     
     const newMarkers = [];
 
-    Object.entries(groupedByLocation).forEach(([coords, buildings]) => {
+    Object.entries(groupedBySite).forEach(([siteName, buildings]) => {
+      // Use the first building's coordinates for the marker
+      const firstBuilding = buildings[0];
+      if (!firstBuilding.Coordinates) return;
+      
+      const coords = firstBuilding.Coordinates.replace(/\s+/g, "");
       const parts = coords.split(",");
       const lat = parseFloat(parts[0]);
       const lng = parseFloat(parts[1]);
       
       if (isNaN(lat) || isNaN(lng)) {
-        console.log("Invalid coords:", coords);
+        console.log("Invalid coords for:", siteName);
         return;
       }
 
       const marker = new google.maps.Marker({
         position: { lat, lng },
         map,
-        title: buildings[0]["Site Name"] || "Property",
+        title: siteName,
         animation: google.maps.Animation.DROP,
-        label: buildings.length > 1 ? String(buildings.length) : ""
+        label: buildings.length > 1 ? {
+          text: String(buildings.length),
+          color: 'white',
+          fontSize: '12px',
+          fontWeight: 'bold'
+        } : null
       });
 
-      const siteName = buildings[0]["Site Name"] || "Property";
-      
       // Create tabs if multiple buildings
       let tabsHTML = "";
       let contentHTML = "";
@@ -241,7 +251,10 @@ export default function Home() {
                   font-weight: 600;
                   white-space: nowrap;
                   transition: all 0.2s;
+                  font-family: 'Inter', sans-serif;
                 "
+                onmouseover="if(this.id !== 'tab-0' || document.getElementById('building-0').style.display === 'none') { this.style.background = '#e2e8f0'; }"
+                onmouseout="if(document.getElementById('building-${index}').style.display === 'none') { this.style.background = 'transparent'; } else { this.style.background = '#2563eb'; }"
               >
                 ${building["Building Name"] || "Building " + (index + 1)}
               </button>
@@ -264,7 +277,7 @@ export default function Home() {
             </h3>
             ${buildings.length > 1 ? `
               <p style="margin: 4px 0 0 0; color: #64748b; font-size: 13px;">
-                ${buildings.length} Buildings at this location
+                ${buildings.length} Buildings at this site
               </p>
             ` : `
               <p style="margin: 4px 0 0 0; color: #64748b; font-size: 14px;">
@@ -308,7 +321,8 @@ export default function Home() {
     });
 
     setMarkers(newMarkers);
-    console.log("Markers created:", newMarkers.length);
+    console.log("Total sites with markers:", newMarkers.length);
+    console.log("Total buildings:", filteredRows.length);
   }
 
   const handleEntityChange = (value) => {
@@ -544,11 +558,11 @@ export default function Home() {
             color: "#475569"
           }}>
             <span>
-              <strong style={{ color: "#1e293b" }}>Total Properties:</strong> {rows.length}
+              <strong style={{ color: "#1e293b" }}>Total Buildings:</strong> {rows.length}
             </span>
             {hasActiveFilters && (
               <span style={{ color: "#10b981", fontWeight: 600 }}>
-                • Showing: {markers.length} locations
+                • Showing: {markers.length} sites
               </span>
             )}
           </div>
