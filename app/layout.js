@@ -59,44 +59,41 @@ export default function RootLayout({ children }) {
             font-weight: 500;
           }
 
-          .iw-tabs {
-            display: flex;
-            gap: 0;
-            border-bottom: 2px solid #e2e8f0;
+          .iw-building-selector {
+            padding: 16px 20px;
             background: #f0f9ff;
+            border-bottom: 2px solid #e2e8f0;
             position: sticky;
             top: 0;
             z-index: 10;
           }
 
-          .iw-tab {
-            flex: 1;
-            padding: 14px 20px;
-            border: none;
-            border-bottom: 3px solid transparent;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 700;
-            white-space: nowrap;
-            transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-          }
-
-          .iw-tab.active {
-            background: white;
+          .iw-selector-label {
+            font-size: 11px;
             color: #006a8e;
-            border-bottom-color: #006a8e;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: block;
           }
 
-          .iw-tab:not(.active) {
-            background: #f0f9ff;
-            color: #64748b;
+          .iw-selector-dropdown {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            background: white;
+            border: 2px solid #006a8e;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            outline: none;
           }
 
-          .iw-tab:not(.active):hover {
-            background: #e0f2fe;
+          .iw-selector-dropdown:hover {
+            border-color: #008bb3;
           }
 
           .iw-content {

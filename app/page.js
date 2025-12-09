@@ -221,21 +221,24 @@ export default function Home() {
         } : null
       });
 
-      let tabsHTML = "";
+      let selectorHTML = "";
       let contentHTML = "";
       
       if (buildings.length > 1) {
-        tabsHTML = `
-          <div class="iw-tabs">
-            ${buildings.map((building, index) => `
-              <button 
-                onclick="window.switchTab(${index}, ${buildings.length})"
-                id="tab-${index}"
-                class="iw-tab ${index === 0 ? 'active' : ''}"
-              >
-                ${building["Building Name"] || "Building " + (index + 1)}
-              </button>
-            `).join('')}
+        selectorHTML = `
+          <div class="iw-building-selector">
+            <label class="iw-selector-label">Select Building:</label>
+            <select 
+              id="building-selector" 
+              class="iw-selector-dropdown"
+              onchange="window.switchBuilding(this.value, ${buildings.length})"
+            >
+              ${buildings.map((building, index) => `
+                <option value="${index}" ${index === 0 ? 'selected' : ''}>
+                  ${building["Building Name"] || "Building " + (index + 1)}
+                </option>
+              `).join('')}
+            </select>
           </div>
         `;
         
@@ -258,7 +261,7 @@ export default function Home() {
             </p>
           </div>
           
-          ${tabsHTML}
+          ${selectorHTML}
           
           <div class="iw-content">
             ${contentHTML}
@@ -266,16 +269,13 @@ export default function Home() {
         </div>
       `;
 
-      window.switchTab = function(tabIndex, totalTabs) {
-        for (let i = 0; i < totalTabs; i++) {
-          const tab = document.getElementById(`tab-${i}`);
+      window.switchBuilding = function(buildingIndex, totalBuildings) {
+        for (let i = 0; i < totalBuildings; i++) {
           const content = document.getElementById(`building-${i}`);
           
-          if (i === tabIndex) {
-            tab.classList.add('active');
+          if (i === parseInt(buildingIndex)) {
             content.classList.add('active');
           } else {
-            tab.classList.remove('active');
             content.classList.remove('active');
           }
         }
