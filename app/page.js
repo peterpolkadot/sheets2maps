@@ -406,9 +406,10 @@ export default function Home() {
           }}>
             <h2 style={{ 
               margin: 0, 
-              fontSize: 18, 
-              fontWeight: 600,
-              color: "#1e293b"
+              fontSize: 20, 
+              fontWeight: 700,
+              color: "#006a8e",
+              letterSpacing: "-0.3px"
             }}>
               Filter Properties
             </h2>
@@ -417,13 +418,13 @@ export default function Home() {
                 onClick={clearFilters}
                 style={{
                   padding: "8px 16px",
-                  background: "#f1f5f9",
-                  border: "1px solid #cbd5e1",
+                  background: "#f0f9ff",
+                  border: "1px solid #006a8e",
                   borderRadius: 6,
                   cursor: "pointer",
                   fontSize: 14,
-                  fontWeight: 500,
-                  color: "#475569"
+                  fontWeight: 600,
+                  color: "#006a8e"
                 }}
               >
                 Clear All Filters
@@ -441,8 +442,8 @@ export default function Home() {
                 display: "block",
                 marginBottom: 8,
                 fontSize: 13,
-                fontWeight: 600,
-                color: "#475569",
+                fontWeight: 700,
+                color: "#006a8e",
                 textTransform: "uppercase",
                 letterSpacing: "0.5px"
               }}>
@@ -456,7 +457,7 @@ export default function Home() {
                   padding: "12px 16px",
                   fontSize: 15,
                   borderRadius: 8,
-                  border: "2px solid #e2e8f0",
+                  border: "2px solid #e0f2fe",
                   background: "white",
                   cursor: "pointer",
                   transition: "border-color 0.2s",
@@ -475,8 +476,8 @@ export default function Home() {
                 display: "block",
                 marginBottom: 8,
                 fontSize: 13,
-                fontWeight: 600,
-                color: "#475569",
+                fontWeight: 700,
+                color: "#006a8e",
                 textTransform: "uppercase",
                 letterSpacing: "0.5px"
               }}>
@@ -490,7 +491,7 @@ export default function Home() {
                   padding: "12px 16px",
                   fontSize: 15,
                   borderRadius: 8,
-                  border: "2px solid #e2e8f0",
+                  border: "2px solid #e0f2fe",
                   background: "white",
                   cursor: "pointer",
                   transition: "border-color 0.2s",
@@ -509,8 +510,8 @@ export default function Home() {
                 display: "block",
                 marginBottom: 8,
                 fontSize: 13,
-                fontWeight: 600,
-                color: "#475569",
+                fontWeight: 700,
+                color: "#006a8e",
                 textTransform: "uppercase",
                 letterSpacing: "0.5px"
               }}>
@@ -524,7 +525,7 @@ export default function Home() {
                   padding: "12px 16px",
                   fontSize: 15,
                   borderRadius: 8,
-                  border: "2px solid #e2e8f0",
+                  border: "2px solid #e0f2fe",
                   background: "white",
                   cursor: "pointer",
                   transition: "border-color 0.2s",
@@ -543,8 +544,8 @@ export default function Home() {
                 display: "block",
                 marginBottom: 8,
                 fontSize: 13,
-                fontWeight: 600,
-                color: "#475569",
+                fontWeight: 700,
+                color: "#006a8e",
                 textTransform: "uppercase",
                 letterSpacing: "0.5px"
               }}>
@@ -558,7 +559,7 @@ export default function Home() {
                   padding: "12px 16px",
                   fontSize: 15,
                   borderRadius: 8,
-                  border: "2px solid #e2e8f0",
+                  border: "2px solid #e0f2fe",
                   background: "white",
                   cursor: "pointer",
                   transition: "border-color 0.2s",
@@ -575,20 +576,21 @@ export default function Home() {
 
           <div style={{ 
             marginTop: 20,
-            padding: "12px 16px",
-            background: "#f8fafc",
+            padding: "14px 18px",
+            background: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)",
             borderRadius: 8,
             display: "flex",
             alignItems: "center",
             gap: 16,
             fontSize: 14,
-            color: "#475569"
+            color: "#0c4a6e",
+            border: "1px solid #bae6fd"
           }}>
             <span>
-              <strong style={{ color: "#1e293b" }}>Total Buildings:</strong> {rows.length}
+              <strong style={{ color: "#006a8e" }}>Total Buildings:</strong> {rows.length}
             </span>
             {hasActiveFilters && (
-              <span style={{ color: "#10b981", fontWeight: 600 }}>
+              <span style={{ color: "#006a8e", fontWeight: 700 }}>
                 • Showing: {markers.length} sites
               </span>
             )}
