@@ -11,28 +11,38 @@ export default function RootLayout({ children }) {
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
         <style>{`
-          .gm-style-iw {
-            padding: 0 !important;
-            max-width: none !important;
-            max-height: none !important;
-          }
+          /* GOOGLE MAPS POPUP – PROFESSIONAL NEUTRAL THEME */
 
-          .gm-style-iw-d {
-            overflow: hidden !important;
-            max-width: none !important;
-            max-height: none !important;
-          }
+.gm-style-iw {
+  padding: 0 !important;
+  max-width: none !important;
+}
 
-          .gm-style-iw-c {
-            padding: 0 !important;
-            max-width: 720px !important;
-            max-height: none !important;
-            overflow: visible !important;
-          }
+.gm-style-iw-d {
+  overflow: hidden !important;
+}
 
-          .gm-style .gm-style-iw-t::after {
-            display: none !important;
-          }
+.gm-style-iw-c {
+  padding: 0 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18) !important;
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.gm-style .gm-style-iw-t::after {
+  display: none !important;
+}
+
+.gm-style-iw-c {
+  animation: fadeInPopup 0.25s ease-out;
+}
+
+@keyframes fadeInPopup {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
         `}</style>
       </head>
 
