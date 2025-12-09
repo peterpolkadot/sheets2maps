@@ -36,36 +36,40 @@ export default function RootLayout({ children }) {
 
           /* InfoWindow Styles */
           .iw-header {
-            padding: 16px 20px;
+            padding: 20px 24px;
             background: linear-gradient(135deg, #006a8e 0%, #008bb3 100%);
             border-bottom: none;
             position: sticky;
             top: 0;
             z-index: 10;
+            box-shadow: 0 2px 8px rgba(0, 106, 142, 0.15);
           }
 
           .iw-title {
             margin: 0;
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 700;
             color: white;
-            letter-spacing: -0.2px;
+            letter-spacing: -0.3px;
+            line-height: 1.3;
           }
 
           .iw-subtitle {
-            margin: 4px 0 0 0;
+            margin: 6px 0 0 0;
             font-size: 13px;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
             font-weight: 500;
+            line-height: 1.4;
           }
 
           .iw-building-selector {
-            padding: 16px 20px;
-            background: #f0f9ff;
-            border-bottom: 2px solid #e2e8f0;
+            padding: 18px 24px;
+            background: linear-gradient(to bottom, #f0f9ff 0%, #e0f2fe 100%);
+            border-bottom: 1px solid #bae6fd;
             position: sticky;
             top: 0;
             z-index: 10;
+            box-shadow: 0 1px 3px rgba(0, 106, 142, 0.08);
           }
 
           .iw-selector-label {
@@ -73,38 +77,35 @@ export default function RootLayout({ children }) {
             color: #006a8e;
             text-transform: uppercase;
             font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
             display: block;
           }
 
           .iw-selector-dropdown {
             width: 100%;
-            padding: 10px 12px;
+            padding: 12px 14px;
             font-size: 14px;
             font-weight: 600;
             color: #0f172a;
             background: white;
             border: 2px solid #006a8e;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-family: 'Inter', sans-serif;
             outline: none;
-          }
-
-          .iw-selector-dropdown:hover {
-            border-color: #008bb3;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
           }
 
           .iw-content {
-            padding: 16px;
-            background: #f8fcff;
+            padding: 20px 24px 24px 24px;
+            background: linear-gradient(to bottom, #f8fcff 0%, #f0f9ff 100%);
             overflow-y: auto;
           }
 
           @media (min-width: 640px) {
             .iw-content {
-              padding: 22px;
+              padding: 24px 28px 28px 28px;
             }
           }
 
@@ -119,22 +120,31 @@ export default function RootLayout({ children }) {
           .field-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 14px;
+            margin-bottom: 20px;
           }
 
           @media (min-width: 480px) {
             .field-grid {
               grid-template-columns: 1fr 1fr;
-              gap: 14px;
+              gap: 16px;
             }
           }
 
           .field-box {
-            padding: 12px;
+            padding: 14px 16px;
             background: white;
-            border-radius: 6px;
+            border-radius: 8px;
             border: 1px solid #e0f2fe;
+            box-shadow: 0 1px 3px rgba(0, 106, 142, 0.06);
+          }
+
+          .field-box-highlight {
+            padding: 16px 18px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fcff 100%);
+            border-radius: 8px;
+            border: 2px solid #006a8e;
+            box-shadow: 0 2px 6px rgba(0, 106, 142, 0.12);
           }
 
           .field-label {
@@ -142,43 +152,57 @@ export default function RootLayout({ children }) {
             color: #006a8e;
             text-transform: uppercase;
             font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+            line-height: 1.2;
           }
 
           .field-value {
-            color: #000000;
-            font-size: 13px;
+            color: #1e293b;
+            font-size: 14px;
             font-weight: 600;
+            line-height: 1.4;
           }
 
           .field-value-large {
-            color: #000000;
-            font-size: 14px;
+            color: #0f172a;
+            font-size: 16px;
             font-weight: 700;
+            line-height: 1.3;
+          }
+
+          .section-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #bae6fd, transparent);
+            margin: 24px 0;
           }
 
           .comments-box {
-            margin-top: 16px;
-            padding: 14px;
-            background: #fffbeb;
-            border-radius: 6px;
-            border-left: 3px solid #f59e0b;
+            margin-top: 20px;
+            padding: 16px 18px;
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+            box-shadow: 0 2px 4px rgba(245, 158, 11, 0.1);
           }
 
           .comments-label {
-            font-size: 10px;
+            font-size: 11px;
             color: #92400e;
             text-transform: uppercase;
             font-weight: 700;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            letter-spacing: 0.6px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
           }
 
           .comments-text {
             font-size: 13px;
             color: #78350f;
-            line-height: 1.5;
+            line-height: 1.6;
+            font-weight: 500;
           }
         `}</style>
       </head>
