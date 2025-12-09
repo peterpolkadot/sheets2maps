@@ -129,7 +129,7 @@ export default function RootLayout({ children }) {
 
           .field-label {
             font-size: 10px;
-            color: #64748b;
+            color: #006a8e;
             text-transform: uppercase;
             font-weight: 700;
             letter-spacing: 0.5px;
@@ -137,13 +137,13 @@ export default function RootLayout({ children }) {
           }
 
           .field-value {
-            color: #0f172a;
+            color: #000000;
             font-size: 13px;
             font-weight: 600;
           }
 
           .field-value-large {
-            color: #006a8e;
+            color: #000000;
             font-size: 14px;
             font-weight: 700;
           }
