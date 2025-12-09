@@ -398,14 +398,14 @@ export default function Home() {
             fontWeight: 700,
             letterSpacing: "-0.5px"
           }}>
-            Sheets2Maps
+            AVR CONSULTING
           </h1>
           <p style={{ 
             margin: 0, 
             color: "rgba(255,255,255,0.9)", 
             fontSize: 16 
           }}>
-            Catholic Diocese Property Valuation System
+            Catholic Diocese Property Dashboard 
           </p>
         </div>
       </div>
