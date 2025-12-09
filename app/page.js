@@ -379,12 +379,24 @@ export default function Home() {
           </div>
         )}
         
+        <div style={{
+          background: "white",
+          borderRadius: 12,
+          overflow: "hidden",
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          marginBottom: 24
+        }}>
+          <div id="map" style={{
+            width: "100%",
+            height: "700px"
+          }}></div>
+        </div>
+
         <div style={{ 
           background: "white",
           padding: 24,
           borderRadius: 12,
-          boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-          marginBottom: 24
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
         }}>
           <div style={{ 
             display: "flex", 
@@ -581,18 +593,6 @@ export default function Home() {
               </span>
             )}
           </div>
-        </div>
-
-        <div style={{
-          background: "white",
-          borderRadius: 12,
-          overflow: "hidden",
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
-        }}>
-          <div id="map" style={{
-            width: "100%",
-            height: "700px"
-          }}></div>
         </div>
       </div>
     </div>
