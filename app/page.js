@@ -100,45 +100,41 @@ export default function Home() {
     return `
       <div id="building-${index}" class="building-content" style="display: ${index === 0 ? 'block' : 'none'};">
         
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+          <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #006a8e;">
+            <div style="font-size: 10px; color: #006a8e; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Recommended Sum Insured</div>
+            <div style="color: #006a8e; font-size: 14px; font-weight: 600;">${formatCurrency(item["Recommended Sum Insured ($)"])}</div>
+          </div>
 
-
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
-  <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
-    <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Recommended Sum Insured</div>
-    <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${formatCurrency(item["Recommended Sum Insured ($)"])}</div>
-  </div>
-
-  <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
-    <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Reinstatement Cost</div>
-    <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${formatCurrency(item["Reinstatement Cost\n($)"])}</div>
-  </div>
-</div>
-
+          <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #006a8e;">
+            <div style="font-size: 10px; color: #006a8e; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Reinstatement Cost</div>
+            <div style="color: #006a8e; font-size: 14px; font-weight: 600;">${formatCurrency(item["Reinstatement Cost\n($)"])}</div>
+          </div>
+        </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
-          <div style="padding: 12px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Entity</div>
+          <div style="padding: 12px; background: white; border-radius: 6px; border: 1px solid #006a8e;">
+            <div style="font-size: 10px; color: #006a8e; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Entity</div>
             <div style="color: #0f172a; font-size: 13px; font-weight: 600;">${item["Entity"] || "N/A"}</div>
           </div>
-          <div style="padding: 12px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">AVR ID</div>
+          <div style="padding: 12px; background: white; border-radius: 6px; border: 1px solid #006a8e;">
+            <div style="font-size: 10px; color: #006a8e; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">AVR ID</div>
             <div style="color: #0f172a; font-size: 13px; font-weight: 600;">${item["AVR ID"] || "N/A"}</div>
           </div>
         </div>
 
-<div style="background: #f8fafc; padding: 16px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 16px;">
-  <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">
-    Recommended Sum Insured
-  </div>
-  <div style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">
-    ${formatCurrency(item["Recommended Sum Insured ($)"])}
-  </div>
+        <div style="background: white; padding: 16px; border-radius: 6px; border: 1px solid #006a8e; margin-bottom: 16px;">
+          <div style="font-size: 11px; color: #006a8e; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">
+            Recommended Sum Insured
+          </div>
+          <div style="font-size: 18px; font-weight: 700; color: #006a8e; margin-bottom: 4px;">
+            ${formatCurrency(item["Recommended Sum Insured ($)"])}
+          </div>
 
-  <div style="font-size: 13px; color: #475569; font-weight: 500;">
-    Reinstatement: ${formatCurrency(item["Reinstatement Cost\n($)"])}
-  </div>
-</div>
-
+          <div style="font-size: 13px; color: #006a8e; font-weight: 500;">
+            Reinstatement: ${formatCurrency(item["Reinstatement Cost\n($)"])}
+          </div>
+        </div>
 
         ${item["Valuer Comments"] && item["Valuer Comments"] !== 0 ? `
           <div style="margin-top: 16px; padding: 14px; background: #fffbeb; border-radius: 6px; border-left: 3px solid #f59e0b;">
@@ -230,7 +226,7 @@ export default function Home() {
       
       if (buildings.length > 1) {
         tabsHTML = `
-          <div style="display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; background: #f8fafc;">
+          <div style="display: flex; gap: 0; border-bottom: 2px solid #006a8e; background: rgba(0, 106, 142, 0.05);">
             ${buildings.map((building, index) => `
               <button 
                 onclick="window.switchTab(${index}, ${buildings.length})"
@@ -238,10 +234,10 @@ export default function Home() {
                 style="
                   flex: 1;
                   padding: 14px 20px;
-                  background: ${index === 0 ? 'white' : '#f8fafc'};
-                  color: ${index === 0 ? '#3b82f6' : '#64748b'};
+                  background: ${index === 0 ? 'white' : 'rgba(0, 106, 142, 0.05)'};
+                  color: ${index === 0 ? '#006a8e' : '#64748b'};
                   border: none;
-                  border-bottom: 3px solid ${index === 0 ? '#3b82f6' : 'transparent'};
+                  border-bottom: 3px solid ${index === 0 ? '#006a8e' : 'transparent'};
                   cursor: pointer;
                   font-size: 13px;
                   font-weight: 700;
@@ -251,8 +247,8 @@ export default function Home() {
                   text-transform: uppercase;
                   letter-spacing: 0.5px;
                 "
-                onmouseover="if(document.getElementById('building-${index}').style.display === 'none') { this.style.background = '#f1f5f9'; }"
-                onmouseout="if(document.getElementById('building-${index}').style.display === 'none') { this.style.background = '#f8fafc'; } else { this.style.background = 'white'; }"
+                onmouseover="if(document.getElementById('building-${index}').style.display === 'none') { this.style.background = 'rgba(0, 106, 142, 0.1)'; }"
+                onmouseout="if(document.getElementById('building-${index}').style.display === 'none') { this.style.background = 'rgba(0, 106, 142, 0.05)'; } else { this.style.background = 'white'; }"
               >
                 ${building["Building Name"] || "Building " + (index + 1)}
               </button>
@@ -268,28 +264,26 @@ export default function Home() {
       }
 
       const fullHTML = `
-       <div style="padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-  <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a; letter-spacing: -0.2px;">
-    ${siteName}
-  </h3>
+        <div style="padding: 14px 20px; background: rgba(0, 106, 142, 0.08); border-bottom: 1px solid #006a8e;">
+          <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #006a8e; letter-spacing: -0.2px;">
+            ${siteName}
+          </h3>
 
-  ${buildings.length > 1 ? `
-    <p style="margin: 4px 0 0 0; font-size: 13px; color: #475569; font-weight: 500;">
-      ${buildings.length} Buildings
-    </p>
-  ` : `
-    <p style="margin: 4px 0 0 0; font-size: 13px; color: #475569; font-weight: 500;">
-      ${buildings[0]["Building Name"] || ""}
-    </p>
-  `}
-</div>
-
+          ${buildings.length > 1 ? `
+            <p style="margin: 4px 0 0 0; font-size: 13px; color: #006a8e; font-weight: 500;">
+              ${buildings.length} Buildings
+            </p>
+          ` : `
+            <p style="margin: 4px 0 0 0; font-size: 13px; color: #006a8e; font-weight: 500;">
+              ${buildings[0]["Building Name"] || ""}
+            </p>
+          `}
+        </div>
           
-          ${tabsHTML}
+        ${tabsHTML}
           
-          <div style="padding: 22px;">
-            ${contentHTML}
-          </div>
+        <div style="padding: 22px; background: rgba(0, 106, 142, 0.03);">
+          ${contentHTML}
         </div>
       `;
 
@@ -300,11 +294,11 @@ export default function Home() {
           
           if (i === tabIndex) {
             tab.style.background = 'white';
-            tab.style.color = '#3b82f6';
-            tab.style.borderBottom = '3px solid #3b82f6';
+            tab.style.color = '#006a8e';
+            tab.style.borderBottom = '3px solid #006a8e';
             content.style.display = 'block';
           } else {
-            tab.style.background = '#f8fafc';
+            tab.style.background = 'rgba(0, 106, 142, 0.05)';
             tab.style.color = '#64748b';
             tab.style.borderBottom = '3px solid transparent';
             content.style.display = 'none';
@@ -372,7 +366,7 @@ export default function Home() {
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fa" }}>
       <div style={{ 
-background: "#006a8e",
+        background: "#006a8e",
         padding: "32px 24px",
         boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
       }}>
