@@ -19,7 +19,7 @@ export default function RootLayout({ children }) {
           }
           .gm-style-iw-c {
             padding: 0 !important;
-            max-width: 500px !important;
+            max-width: 550px !important;
           }
         `}</style>
       </head>

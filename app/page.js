@@ -84,7 +84,7 @@ export default function Home() {
     });
 
     const newInfoWindow = new google.maps.InfoWindow({
-      maxWidth: 480
+      maxWidth: 550
     });
     
     newMap.addListener("click", () => {
@@ -131,7 +131,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
           <div style="padding: 12px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
             <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Entity</div>
             <div style="color: #0f172a; font-size: 13px; font-weight: 600;">${item["Entity"] || "N/A"}</div>
@@ -142,14 +142,14 @@ export default function Home() {
           </div>
         </div>
 
-        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 18px; border-radius: 8px; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);">
-          <div style="font-size: 11px; color: rgba(255,255,255,0.9); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 8px;">
+        <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);">
+          <div style="font-size: 11px; color: rgba(255,255,255,0.9); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 10px;">
             💰 Recommended Sum Insured
           </div>
-          <div style="font-size: 28px; font-weight: 800; color: white; margin-bottom: 6px; letter-spacing: -0.5px;">
+          <div style="font-size: 32px; font-weight: 800; color: white; margin-bottom: 8px; letter-spacing: -0.5px;">
             ${formatCurrency(item["Recommended Sum Insured ($)"])}
           </div>
-          <div style="font-size: 12px; color: rgba(255,255,255,0.85); font-weight: 500;">
+          <div style="font-size: 13px; color: rgba(255,255,255,0.85); font-weight: 500;">
             Reinstatement: ${formatCurrency(item["Reinstatement Cost\n($)"])}
           </div>
         </div>
@@ -282,7 +282,7 @@ export default function Home() {
       }
 
       const fullHTML = `
-        <div style="font-family: 'Inter', sans-serif; line-height: 1.6; min-width: 460px;">
+        <div style="font-family: 'Inter', sans-serif; line-height: 1.6; min-width: 530px;">
           <div style="padding: 18px 20px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;">
             <h3 style="margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.3px;">
               ${siteName}
@@ -300,7 +300,7 @@ export default function Home() {
           
           ${tabsHTML}
           
-          <div style="padding: 20px;">
+          <div style="padding: 22px;">
             ${contentHTML}
           </div>
         </div>
