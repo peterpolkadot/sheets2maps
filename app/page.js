@@ -372,7 +372,7 @@ export default function Home() {
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fa" }}>
       <div style={{ 
-background: "#1C5C3A",
+background: "#006a8e",
         padding: "32px 24px",
         boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
       }}>
