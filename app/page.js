@@ -94,10 +94,9 @@ export default function Home() {
     setMapLoaded(true);
   }
 
-  function createFieldBox(label, value, highlight = false) {
-    const boxClass = highlight ? "field-box-highlight" : "field-box";
+  function createFieldBox(label, value) {
     return `
-      <div class="${boxClass}">
+      <div class="field-box">
         <div class="field-label">${label}</div>
         <div class="field-value">${value || "N/A"}</div>
       </div>
@@ -108,24 +107,19 @@ export default function Home() {
     return `
       <div id="building-${index}" class="building-content ${index === 0 ? 'active' : ''}">
         <div class="field-grid">
-          <div class="field-box-highlight">
-            <div class="field-label">💰 Recommended Sum Insured</div>
+          <div class="field-box">
+            <div class="field-label">Recommended Sum Insured</div>
             <div class="field-value-large">${formatCurrency(item["Recommended Sum Insured ($)"])}</div>
           </div>
-          <div class="field-box-highlight">
-            <div class="field-label">🏗️ Reinstatement Cost</div>
+          <div class="field-box">
+            <div class="field-label">Reinstatement Cost</div>
             <div class="field-value-large">${formatCurrency(item["Reinstatement Cost\n($)"])}</div>
           </div>
         </div>
 
-        <div class="section-divider"></div>
-
         <div class="field-grid">
           ${createFieldBox("Entity", item["Entity"])}
           ${createFieldBox("AVR ID", item["AVR ID"])}
-        </div>
-
-        <div class="field-grid">
           ${createFieldBox("Occupancy", item["Occupancy"])}
           ${createFieldBox("Site Use", item["Site Use"])}
           ${createFieldBox("Leased", item["Leased"])}
@@ -146,10 +140,7 @@ export default function Home() {
 
         ${item["Valuer Comments"] && item["Valuer Comments"] !== 0 ? `
           <div class="comments-box">
-            <div class="comments-label">
-              <span>💬</span>
-              <span>Valuer Comments</span>
-            </div>
+            <div class="comments-label">💬 Valuer Comments</div>
             <div class="comments-text">${item["Valuer Comments"]}</div>
           </div>
         ` : ""}
@@ -234,7 +225,7 @@ export default function Home() {
       if (buildings.length > 1) {
         selectorHTML = `
           <div class="iw-building-selector">
-            <label class="iw-selector-label">Select Building</label>
+            <label class="iw-selector-label">Select Building:</label>
             <select 
               id="building-selector" 
               class="iw-selector-dropdown"
@@ -262,8 +253,8 @@ export default function Home() {
             <h3 class="iw-title">${siteName}</h3>
             <p class="iw-subtitle">
               ${buildings.length > 1 
-                ? buildings.length + " Buildings at this location" 
-                : (buildings[0]["Building Name"] || "Single Building")
+                ? buildings.length + " Buildings" 
+                : (buildings[0]["Building Name"] || "")
               }
             </p>
           </div>
