@@ -279,21 +279,22 @@ export default function Home() {
       }
 
       const fullHTML = `
-        <div style="font-family: 'Inter', sans-serif; line-height: 1.6; min-width: 530px;">
-          <div style="padding: 18px 20px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;">
-            <h3 style="margin: 0; font-size: 19px; font-weight: 700; letter-spacing: -0.3px;">
-              ${siteName}
-            </h3>
-            ${buildings.length > 1 ? `
-              <p style="margin: 6px 0 0 0; font-size: 13px; opacity: 0.95; font-weight: 500;">
-                ${buildings.length} Buildings at this site
-              </p>
-            ` : `
-              <p style="margin: 6px 0 0 0; font-size: 14px; opacity: 0.95; font-weight: 500;">
-                ${buildings[0]["Building Name"] || ""}
-              </p>
-            `}
-          </div>
+       <div style="padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
+  <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a; letter-spacing: -0.2px;">
+    ${siteName}
+  </h3>
+
+  ${buildings.length > 1 ? `
+    <p style="margin: 4px 0 0 0; font-size: 13px; color: #475569; font-weight: 500;">
+      ${buildings.length} Buildings
+    </p>
+  ` : `
+    <p style="margin: 4px 0 0 0; font-size: 13px; color: #475569; font-weight: 500;">
+      ${buildings[0]["Building Name"] || ""}
+    </p>
+  `}
+</div>
+
           
           ${tabsHTML}
           
