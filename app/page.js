@@ -129,6 +129,15 @@ export default function Home() {
           ${createFieldBox("Construction Year", item["Construction Year"])}
           ${createFieldBox("Gross Building Area", item["Gross Building Area"])}
           ${createFieldBox("BCA", item["BCA"])}
+          ${createFieldBox("Building Separation", item["Building Separation"])}
+          ${createFieldBox("Bushfire Zone", item["Bushfire Zone"])}
+          ${createFieldBox("Flood Zone", item["Flood Zone"])}
+          ${createFieldBox("Land Contour", item["Land Contour"])}
+          ${createFieldBox("Site Accessibility", item["Site Accessibility"])}
+          ${createFieldBox("Distance From Road", item["Distance From Road"])}
+          ${createFieldBox("Levels", item["Levels"])}
+          ${createFieldBox("Fit out Included", item["Fit out Included"])}
+          ${createFieldBox("Heating & Cooling", item["Heating & Cooling"])}
         </div>
 
         ${item["Valuer Comments"] && item["Valuer Comments"] !== 0 ? `
