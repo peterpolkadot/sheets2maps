@@ -96,58 +96,45 @@ export default function Home() {
     setMapLoaded(true);
   }
 
+  function createFieldBox(label, value) {
+    return `
+      <div class="field-box">
+        <div class="field-label">${label}</div>
+        <div class="field-value">${value || "N/A"}</div>
+      </div>
+    `;
+  }
+
   function createBuildingContent(item, index, totalBuildings) {
     return `
-      <div id="building-${index}" class="building-content" style="display: ${index === 0 ? 'block' : 'none'};">
-        
-
-
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
-  <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
-    <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Recommended Sum Insured</div>
-    <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${formatCurrency(item["Recommended Sum Insured ($)"])}</div>
-  </div>
-
-  <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
-    <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Reinstatement Cost</div>
-    <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${formatCurrency(item["Reinstatement Cost\n($)"])}</div>
-  </div>
-</div>
-
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
-          <div style="padding: 12px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Entity</div>
-            <div style="color: #0f172a; font-size: 13px; font-weight: 600;">${item["Entity"] || "N/A"}</div>
+      <div id="building-${index}" class="building-content ${index === 0 ? 'active' : ''}">
+        <div class="field-grid">
+          <div class="field-box">
+            <div class="field-label">Recommended Sum Insured</div>
+            <div class="field-value-large">${formatCurrency(item["Recommended Sum Insured ($)"])}</div>
           </div>
-          <div style="padding: 12px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
-            <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">AVR ID</div>
-            <div style="color: #0f172a; font-size: 13px; font-weight: 600;">${item["AVR ID"] || "N/A"}</div>
+          <div class="field-box">
+            <div class="field-label">Reinstatement Cost</div>
+            <div class="field-value-large">${formatCurrency(item["Reinstatement Cost\n($)"])}</div>
           </div>
         </div>
 
-<div style="background: #f8fafc; padding: 16px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 16px;">
-  <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">
-    Recommended Sum Insured
-  </div>
-  <div style="font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">
-    ${formatCurrency(item["Recommended Sum Insured ($)"])}
-  </div>
-
-  <div style="font-size: 13px; color: #475569; font-weight: 500;">
-    Reinstatement: ${formatCurrency(item["Reinstatement Cost\n($)"])}
-  </div>
-</div>
-
+        <div class="field-grid">
+          ${createFieldBox("Entity", item["Entity"])}
+          ${createFieldBox("AVR ID", item["AVR ID"])}
+          ${createFieldBox("Occupancy", item["Occupancy"])}
+          ${createFieldBox("Site Use", item["Site Use"])}
+          ${createFieldBox("Leased", item["Leased"])}
+          ${createFieldBox("Heritage Listed", item["Heritage Listed"])}
+          ${createFieldBox("Construction Year", item["Construction Year"])}
+          ${createFieldBox("Gross Building Area", item["Gross Building Area"])}
+          ${createFieldBox("BCA", item["BCA"])}
+        </div>
 
         ${item["Valuer Comments"] && item["Valuer Comments"] !== 0 ? `
-          <div style="margin-top: 16px; padding: 14px; background: #fffbeb; border-radius: 6px; border-left: 3px solid #f59e0b;">
-            <div style="font-size: 10px; color: #92400e; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">
-              💬 Valuer Comments
-            </div>
-            <div style="font-size: 13px; color: #78350f; line-height: 1.5;">
-              ${item["Valuer Comments"]}
-            </div>
+          <div class="comments-box">
+            <div class="comments-label">💬 Valuer Comments</div>
+            <div class="comments-text">${item["Valuer Comments"]}</div>
           </div>
         ` : ""}
       </div>
@@ -230,29 +217,12 @@ export default function Home() {
       
       if (buildings.length > 1) {
         tabsHTML = `
-          <div style="display: flex; gap: 0; border-bottom: 2px solid #e2e8f0; background: #f8fafc;">
+          <div class="iw-tabs">
             ${buildings.map((building, index) => `
               <button 
                 onclick="window.switchTab(${index}, ${buildings.length})"
                 id="tab-${index}"
-                style="
-                  flex: 1;
-                  padding: 14px 20px;
-                  background: ${index === 0 ? 'white' : '#f8fafc'};
-                  color: ${index === 0 ? '#3b82f6' : '#64748b'};
-                  border: none;
-                  border-bottom: 3px solid ${index === 0 ? '#3b82f6' : 'transparent'};
-                  cursor: pointer;
-                  font-size: 13px;
-                  font-weight: 700;
-                  white-space: nowrap;
-                  transition: all 0.2s;
-                  font-family: 'Inter', sans-serif;
-                  text-transform: uppercase;
-                  letter-spacing: 0.5px;
-                "
-                onmouseover="if(document.getElementById('building-${index}').style.display === 'none') { this.style.background = '#f1f5f9'; }"
-                onmouseout="if(document.getElementById('building-${index}').style.display === 'none') { this.style.background = '#f8fafc'; } else { this.style.background = 'white'; }"
+                class="iw-tab ${index === 0 ? 'active' : ''}"
               >
                 ${building["Building Name"] || "Building " + (index + 1)}
               </button>
@@ -268,26 +238,20 @@ export default function Home() {
       }
 
       const fullHTML = `
-       <div style="padding: 14px 20px; background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-  <h3 style="margin: 0; font-size: 16px; font-weight: 700; color: #0f172a; letter-spacing: -0.2px;">
-    ${siteName}
-  </h3>
-
-  ${buildings.length > 1 ? `
-    <p style="margin: 4px 0 0 0; font-size: 13px; color: #475569; font-weight: 500;">
-      ${buildings.length} Buildings
-    </p>
-  ` : `
-    <p style="margin: 4px 0 0 0; font-size: 13px; color: #475569; font-weight: 500;">
-      ${buildings[0]["Building Name"] || ""}
-    </p>
-  `}
-</div>
-
+        <div>
+          <div class="iw-header">
+            <h3 class="iw-title">${siteName}</h3>
+            <p class="iw-subtitle">
+              ${buildings.length > 1 
+                ? buildings.length + " Buildings" 
+                : (buildings[0]["Building Name"] || "")
+              }
+            </p>
+          </div>
           
           ${tabsHTML}
           
-          <div style="padding: 22px;">
+          <div class="iw-content">
             ${contentHTML}
           </div>
         </div>
@@ -299,15 +263,11 @@ export default function Home() {
           const content = document.getElementById(`building-${i}`);
           
           if (i === tabIndex) {
-            tab.style.background = 'white';
-            tab.style.color = '#3b82f6';
-            tab.style.borderBottom = '3px solid #3b82f6';
-            content.style.display = 'block';
+            tab.classList.add('active');
+            content.classList.add('active');
           } else {
-            tab.style.background = '#f8fafc';
-            tab.style.color = '#64748b';
-            tab.style.borderBottom = '3px solid transparent';
-            content.style.display = 'none';
+            tab.classList.remove('active');
+            content.classList.remove('active');
           }
         }
       };
@@ -372,7 +332,7 @@ export default function Home() {
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fa" }}>
       <div style={{ 
-background: "#006a8e",
+        background: "#006a8e",
         padding: "32px 24px",
         boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
       }}>
