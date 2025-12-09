@@ -92,17 +92,7 @@ export default function Home() {
   function createBuildingContent(item, index, totalBuildings) {
     return `
       <div id="building-${index}" class="building-content" style="display: ${index === 0 ? 'block' : 'none'};">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-          <div>
-            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Entity</div>
-            <div style="color: #1e293b; font-size: 14px;">${item["Entity"] || "N/A"}</div>
-          </div>
-          <div>
-            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">AVR ID</div>
-            <div style="color: #1e293b; font-size: 14px;">${item["AVR ID"] || "N/A"}</div>
-          </div>
-        </div>
-
+        
         <div style="background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); padding: 14px; border-radius: 8px; margin-bottom: 16px;">
           <div style="font-size: 11px; color: #475569; text-transform: uppercase; font-weight: 600; margin-bottom: 6px;">
             📍 Address
@@ -129,6 +119,17 @@ export default function Home() {
           <div>
             <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Area</div>
             <div style="color: #1e293b; font-size: 14px;">${item["Gross Building Area"] || "N/A"} m²</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">Entity</div>
+            <div style="color: #1e293b; font-size: 14px;">${item["Entity"] || "N/A"}</div>
+          </div>
+          <div>
+            <div style="font-size: 11px; color: #64748b; text-transform: uppercase; font-weight: 600; margin-bottom: 4px;">AVR ID</div>
+            <div style="color: #1e293b; font-size: 14px;">${item["AVR ID"] || "N/A"}</div>
           </div>
         </div>
 
@@ -184,7 +185,6 @@ export default function Home() {
       filteredRows = filteredRows.filter(item => item["Building Name"] === selectedBuildingName);
     }
     
-    // Group by Site Name (not coordinates) to handle multiple buildings at same site
     const groupedBySite = {};
     
     filteredRows.forEach(item => {
@@ -197,12 +197,9 @@ export default function Home() {
       groupedBySite[siteName].push(item);
     });
     
-    console.log("Grouped by site:", groupedBySite);
-    
     const newMarkers = [];
 
     Object.entries(groupedBySite).forEach(([siteName, buildings]) => {
-      // Use the first building's coordinates for the marker
       const firstBuilding = buildings[0];
       if (!firstBuilding.Coordinates) return;
       
@@ -229,7 +226,6 @@ export default function Home() {
         } : null
       });
 
-      // Create tabs if multiple buildings
       let tabsHTML = "";
       let contentHTML = "";
       
@@ -291,7 +287,6 @@ export default function Home() {
         </div>
       `;
 
-      // Define the switchTab function globally
       window.switchTab = function(tabIndex, totalTabs) {
         for (let i = 0; i < totalTabs; i++) {
           const tab = document.getElementById(`tab-${i}`);
@@ -321,8 +316,6 @@ export default function Home() {
     });
 
     setMarkers(newMarkers);
-    console.log("Total sites with markers:", newMarkers.length);
-    console.log("Total buildings:", filteredRows.length);
   }
 
   const handleEntityChange = (value) => {
