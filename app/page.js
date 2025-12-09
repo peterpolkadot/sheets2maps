@@ -112,21 +112,18 @@ export default function Home() {
           </div>
         </div>
 
-<div style="padding: 12px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 16px;">
-  <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">
-    Recommended Sum Insured
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+  <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+    <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Recommended Sum Insured</div>
+    <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${formatCurrency(item["Recommended Sum Insured ($)"])}</div>
   </div>
-  <div style="color: #0f172a; font-size: 14px; font-weight: 600;">
-    ${formatCurrency(item["Recommended Sum Insured ($)"])}
-  </div>
-</div>
-
 
   <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
     <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Reinstatement Cost</div>
     <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${formatCurrency(item["Reinstatement Cost\n($)"])}</div>
   </div>
 </div>
+
 
 
 
