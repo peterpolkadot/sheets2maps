@@ -112,24 +112,19 @@ export default function Home() {
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
-          <div style="background: #fefce8; padding: 12px; border-radius: 6px;">
-            <div style="font-size: 10px; color: #854d0e; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Site Use</div>
-            <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${item["Site Use"] || "N/A"}</div>
-          </div>
-          <div style="background: #f0f9ff; padding: 12px; border-radius: 6px;">
-            <div style="font-size: 10px; color: #075985; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Occupancy</div>
-            <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${item["Occupancy"] || "N/A"}</div>
-          </div>
-          <div style="background: #fef2f2; padding: 12px; border-radius: 6px;">
-            <div style="font-size: 10px; color: #991b1b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Built</div>
-            <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${item["Construction Year"] || "N/A"}</div>
-          </div>
-          <div style="background: #f5f3ff; padding: 12px; border-radius: 6px;">
-            <div style="font-size: 10px; color: #5b21b6; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Area</div>
-            <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${item["Gross Building Area"] || "N/A"} m²</div>
-          </div>
-        </div>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px;">
+  <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+    <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Recommended Sum Insured</div>
+    <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${formatCurrency(item["Recommended Sum Insured ($)"])}</div>
+  </div>
+
+  <div style="background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">
+    <div style="font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; margin-bottom: 6px;">Reinstatement Cost</div>
+    <div style="color: #0f172a; font-size: 14px; font-weight: 600;">${formatCurrency(item["Reinstatement Cost
+($)"])}</div>
+  </div>
+</div>
+
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 18px;">
           <div style="padding: 12px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0;">
