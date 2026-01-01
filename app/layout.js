@@ -1,6 +1,6 @@
 export const metadata = {
   title: "Catholic Diocese Property Dashboard",
-  description: "Interactive property valuation mapping system v1"
+  description: "Interactive property valuation mapping system."
 };
 
 export default function RootLayout({ children }) {
@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
           .gm-style-iw {
             padding: 0 !important;
             max-width: none !important;
-            max-height: none !important; 
+            max-height: none !important;
           }
 
           .gm-style-iw-d {
