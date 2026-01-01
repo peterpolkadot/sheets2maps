@@ -8,7 +8,7 @@ export default function Login() {
   const [error, setError] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (!password) {
@@ -16,8 +16,18 @@ export default function Login() {
       return;
     }
 
-    // Redirect with password as query param - middleware will handle it
-    window.location.href = "/?password=" + encodeURIComponent(password);
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password })
+    });
+
+    if (!res.ok) {
+      setError(true);
+      return;
+    }
+
+    window.location.href = "/";
   };
 
   return (
