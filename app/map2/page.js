@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 
 export default function Map2() {
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
+
+  const [entities, setEntities] = useState([]);
+  const [suburbs, setSuburbs] = useState([]);
 
   const [selectedEntity, setSelectedEntity] = useState("");
   const [selectedSuburb, setSelectedSuburb] = useState("");
@@ -13,7 +16,7 @@ export default function Map2() {
   const [markers, setMarkers] = useState([]);
   const [infoWindow, setInfoWindow] = useState(null);
 
-  /* ---------------- LOAD DATA ---------------- */
+  /* ---------------- LOAD DATA (SAME AS MAP1) ---------------- */
 
   useEffect(() => {
     fetch("/api/properties2")
@@ -23,27 +26,25 @@ export default function Map2() {
           setError(data.error);
           return;
         }
+
         setRows(data);
+
+        // ✅ EXPLICIT POPULATION (THIS WAS MISSING)
+        const entitySet = [...new Set(data.map(r => r.Entity).filter(Boolean))];
+        const suburbSet = [...new Set(data.map(r => r["Suburb / Town"]).filter(Boolean))];
+
+        setEntities(entitySet);
+        setSuburbs(suburbSet.sort());
       })
       .catch(err => setError(err.toString()));
   }, []);
 
-  /* ---------------- DERIVED FILTER VALUES ---------------- */
-
-  const entities = useMemo(() => {
-    return [...new Set(rows.map(r => r.Entity).filter(Boolean))];
-  }, [rows]);
-
-  const suburbs = useMemo(() => {
-    return [...new Set(rows.map(r => r["Suburb / Town"]).filter(Boolean))].sort();
-  }, [rows]);
-
   /* ---------------- MAP INIT ---------------- */
 
   useEffect(() => {
-    const wait = setInterval(() => {
+    const check = setInterval(() => {
       if (typeof google !== "undefined" && google.maps) {
-        clearInterval(wait);
+        clearInterval(check);
 
         const m = new google.maps.Map(document.getElementById("map2"), {
           zoom: 7,
@@ -65,20 +66,15 @@ export default function Map2() {
       }
     }, 100);
 
-    return () => clearInterval(wait);
+    return () => clearInterval(check);
   }, []);
 
-  /* ---------------- MARKERS ---------------- */
+  /* ---------------- MARKERS (SAME PATTERN AS MAP1) ---------------- */
 
   useEffect(() => {
-    if (!map || !infoWindow || !rows.length) return;
+    if (!map || !infoWindow || rows.length === 0) return;
     updateMarkers();
   }, [map, infoWindow, rows, selectedEntity, selectedSuburb]);
-
-  function formatCurrency(v) {
-    if (!v || v === "$-" || v === 0) return "N/A";
-    return v;
-  }
 
   function updateMarkers() {
     markers.forEach(m => m.setMap(null));
@@ -96,9 +92,10 @@ export default function Map2() {
 
     const grouped = {};
     filtered.forEach(r => {
-      if (!r["Site Name"]) return;
-      grouped[r["Site Name"]] ||= [];
-      grouped[r["Site Name"]].push(r);
+      const site = r["Site Name"];
+      if (!site) return;
+      grouped[site] ||= [];
+      grouped[site].push(r);
     });
 
     const newMarkers = [];
@@ -127,13 +124,13 @@ export default function Map2() {
               <div class="field-box">
                 <div class="field-label">Reinstatement Cost</div>
                 <div class="field-value-large">
-                  ${formatCurrency(items[0]["Reinstatement Cost\n($)"])}
+                  ${items[0]["Reinstatement Cost\n($)"] || "N/A"}
                 </div>
               </div>
               <div class="field-box">
                 <div class="field-label">Inflation Provision</div>
                 <div class="field-value-large">
-                  ${formatCurrency(items[0]["Total Cost Inflation Provision\n($)"])}
+                  ${items[0]["Total Cost Inflation Provision\n($)"] || "N/A"}
                 </div>
               </div>
             </div>
@@ -151,6 +148,8 @@ export default function Map2() {
 
     setMarkers(newMarkers);
   }
+
+  /* ---------------- UI ---------------- */
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fa" }}>
