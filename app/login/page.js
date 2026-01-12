@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const returnTo = searchParams.get('returnTo') || '/';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +29,8 @@ export default function Login() {
       return;
     }
 
-    window.location.href = "/";
+    // Redirect to the page they were trying to access
+    window.location.href = returnTo;
   };
 
   return (
@@ -108,7 +111,7 @@ export default function Login() {
                 fontSize: "13px",
                 color: "#ef4444"
               }}>
-                Please enter a password
+                Invalid password
               </p>
             )}
           </div>

@@ -1,7 +1,15 @@
 import { NextResponse } from 'next/server';
 
 export function middleware(request) {
-  // Skip password check for API routes (they need to work)
+  // Only protect /map1 and /map2 pages (and their sub-routes)
+  const isProtectedRoute = request.nextUrl.pathname.startsWith('/map1') || 
+                           request.nextUrl.pathname.startsWith('/map2');
+  
+  if (!isProtectedRoute) {
+    return NextResponse.next();
+  }
+
+  // Skip password check for API routes
   if (request.nextUrl.pathname.startsWith('/api/')) {
     return NextResponse.next();
   }
@@ -20,10 +28,12 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  // Show login page
-  return NextResponse.rewrite(new URL('/login', request.url));
+  // Redirect to login with return URL
+  const loginUrl = new URL('/login', request.url);
+  loginUrl.searchParams.set('returnTo', request.nextUrl.pathname);
+  return NextResponse.redirect(loginUrl);
 }
 
 export const config = {
-  matcher: '/((?!login|_next/static|_next/image|favicon.ico).*)',
+  matcher: ['/map1/:path*', '/map2/:path*'],
 };
