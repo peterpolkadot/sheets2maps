@@ -7,20 +7,16 @@ export default function Map2() {
   const [error, setError] = useState(null);
 
   const [entities, setEntities] = useState([]);
-  const [siteNames, setSiteNames] = useState([]);
-  const [buildingNames, setBuildingNames] = useState([]);
   const [suburbs, setSuburbs] = useState([]);
 
   const [selectedEntity, setSelectedEntity] = useState("");
-  const [selectedSiteName, setSelectedSiteName] = useState("");
-  const [selectedBuildingName, setSelectedBuildingName] = useState("");
   const [selectedSuburb, setSelectedSuburb] = useState("");
 
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [infoWindow, setInfoWindow] = useState(null);
 
-  /* ---------------- DATA LOAD (SHEET 2) ---------------- */
+  /* ---------------- LOAD DATA (SHEET 2) ---------------- */
 
   useEffect(() => {
     fetch("/api/properties2")
@@ -33,10 +29,13 @@ export default function Map2() {
 
         setRows(data);
 
-        setEntities([...new Set(data.map(i => i.Entity).filter(Boolean))].sort());
-        setSiteNames([...new Set(data.map(i => i["Site Name"]).filter(Boolean))].sort());
-        setBuildingNames([...new Set(data.map(i => i["Building Name"]).filter(Boolean))].sort());
-        setSuburbs([...new Set(data.map(i => i["Suburb / Town"]).filter(Boolean))].sort());
+        setEntities(
+          [...new Set(data.map(r => r.Entity).filter(Boolean))].sort()
+        );
+
+        setSuburbs(
+          [...new Set(data.map(r => r["Suburb / Town"]).filter(Boolean))].sort()
+        );
       })
       .catch(err => setError(err.toString()));
   }, []);
@@ -50,7 +49,7 @@ export default function Map2() {
 
         const m = new google.maps.Map(document.getElementById("map2"), {
           zoom: 7,
-          center: { lat: -27.5, lng: 153.0 },
+          center: { lat: -37.4713, lng: 144.7852 },
           styles: [{
             featureType: "poi",
             elementType: "labels",
@@ -72,11 +71,13 @@ export default function Map2() {
   /* ---------------- MARKERS ---------------- */
 
   useEffect(() => {
-    if (map && infoWindow && rows.length) updateMarkers();
-  }, [map, infoWindow, rows, selectedEntity, selectedSiteName, selectedBuildingName, selectedSuburb]);
+    if (map && infoWindow && rows.length) {
+      updateMarkers();
+    }
+  }, [map, infoWindow, rows, selectedEntity, selectedSuburb]);
 
   function formatCurrency(v) {
-    if (!v || v === "$-" || v === 0) return "N/A";
+    if (!v || v === 0) return "N/A";
     if (typeof v === "string") return v;
     return "$" + Number(v).toLocaleString();
   }
@@ -90,31 +91,29 @@ export default function Map2() {
     `;
   }
 
-  function buildingHTML(item, index) {
+  function buildingHTML(item) {
     return `
-      <div id="building-${index}" class="building-content ${index === 0 ? "active" : ""}">
+      <div class="building-content active">
         <div class="field-grid">
           <div class="field-box">
             <div class="field-label">Reinstatement Cost</div>
-            <div class="field-value-large">${formatCurrency(item["Reinstatement Cost\n($)"])}</div>
+            <div class="field-value-large">
+              ${formatCurrency(item["Reinstatement Cost\n($)"])}
+            </div>
           </div>
           <div class="field-box">
             <div class="field-label">Inflation Provision</div>
-            <div class="field-value-large">${formatCurrency(item["Total Cost Inflation Provision\n($)"])}</div>
+            <div class="field-value-large">
+              ${formatCurrency(item["Total Cost Inflation Provision\n($)"])}
+            </div>
           </div>
         </div>
 
         <div class="field-grid">
           ${field("Entity", item.Entity)}
-          ${field("AVR ID", item["AVR ID"])}
+          ${field("Suburb / Town", item["Suburb / Town"])}
           ${field("Date of Valuation", item["Date of Valuation"])}
           ${field("Basis of Valuation", item["Basis of Valuation"])}
-          ${field("Occupancy", item.Occupancy)}
-          ${field("Site Use", item["Site Use"])}
-          ${field("Construction Year", item["Construction Year"])}
-          ${field("Gross Building Area", item["Gross Building Area"])}
-          ${field("BCA", item.BCA)}
-          ${field("Levels", item.Levels)}
         </div>
       </div>
     `;
@@ -126,10 +125,13 @@ export default function Map2() {
 
     let filtered = rows;
 
-    if (selectedEntity) filtered = filtered.filter(r => r.Entity === selectedEntity);
-    if (selectedSiteName) filtered = filtered.filter(r => r["Site Name"] === selectedSiteName);
-    if (selectedBuildingName) filtered = filtered.filter(r => r["Building Name"] === selectedBuildingName);
-    if (selectedSuburb) filtered = filtered.filter(r => r["Suburb / Town"] === selectedSuburb);
+    if (selectedEntity) {
+      filtered = filtered.filter(r => r.Entity === selectedEntity);
+    }
+
+    if (selectedSuburb) {
+      filtered = filtered.filter(r => r["Suburb / Town"] === selectedSuburb);
+    }
 
     const grouped = {};
     filtered.forEach(r => {
@@ -140,8 +142,8 @@ export default function Map2() {
 
     const newMarkers = [];
 
-    Object.entries(grouped).forEach(([site, buildings]) => {
-      const coords = buildings[0].Coordinates;
+    Object.entries(grouped).forEach(([site, items]) => {
+      const coords = items[0].Coordinates;
       if (!coords) return;
 
       const [lat, lng] = coords.replace(/\s+/g, "").split(",").map(Number);
@@ -150,42 +152,20 @@ export default function Map2() {
       const marker = new google.maps.Marker({
         map,
         position: { lat, lng },
-        title: site,
-        label: buildings.length > 1 ? { text: String(buildings.length), color: "white" } : null
+        title: site
       });
-
-      let selector = "";
-      if (buildings.length > 1) {
-        selector = `
-          <div class="iw-building-selector">
-            <label>Select Building</label>
-            <select onchange="window.switchBuilding(this.value, ${buildings.length})">
-              ${buildings.map((b, i) =>
-                `<option value="${i}">${b["Building Name"] || "Building " + (i + 1)}</option>`
-              ).join("")}
-            </select>
-          </div>
-        `;
-      }
 
       const html = `
         <div>
           <div class="iw-header">
-            <h3>${site}</h3>
-            <p>${buildings.length} Building(s)</p>
+            <h3 class="iw-title">${site}</h3>
+            <p class="iw-subtitle">${items[0]["Suburb / Town"] || ""}</p>
           </div>
-          ${selector}
           <div class="iw-content">
-            ${buildings.map(buildingHTML).join("")}
+            ${buildingHTML(items[0])}
           </div>
         </div>
       `;
-
-      window.switchBuilding = (i, total) => {
-        for (let x = 0; x < total; x++) {
-          document.getElementById(`building-${x}`)?.classList.toggle("active", x == i);
-        }
-      };
 
       marker.addListener("click", () => {
         infoWindow.setContent(html);
@@ -200,7 +180,62 @@ export default function Map2() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fa" }}>
-      <div id="map2" style={{ height: "700px" }} />
+      <div style={{ background: "#006a8e", padding: "24px" }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto", color: "white" }}>
+          <h1 style={{ margin: 0, fontSize: 28 }}>Secondary Dashboard</h1>
+          <p style={{ margin: "4px 0 0 0", opacity: 0.9 }}>
+            Filter by Entity and Suburb
+          </p>
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1400, margin: "0 auto", padding: 24 }}>
+        {error && (
+          <div style={{ background: "#fee2e2", padding: 16, borderRadius: 8 }}>
+            <strong>Error:</strong> {error}
+          </div>
+        )}
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: 16,
+          marginBottom: 20
+        }}>
+          <div>
+            <label style={{ fontWeight: 700, color: "#006a8e" }}>Entity</label>
+            <select
+              value={selectedEntity}
+              onChange={e => setSelectedEntity(e.target.value)}
+              style={{ width: "100%", padding: 10 }}
+            >
+              <option value="">All</option>
+              {entities.map(e => <option key={e} value={e}>{e}</option>)}
+            </select>
+          </div>
+
+          <div>
+            <label style={{ fontWeight: 700, color: "#006a8e" }}>Suburb / Town</label>
+            <select
+              value={selectedSuburb}
+              onChange={e => setSelectedSuburb(e.target.value)}
+              style={{ width: "100%", padding: 10 }}
+            >
+              <option value="">All</option>
+              {suburbs.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+          </div>
+        </div>
+
+        <div style={{
+          background: "white",
+          borderRadius: 12,
+          overflow: "hidden",
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
+        }}>
+          <div id="map2" style={{ height: "700px", width: "100%" }} />
+        </div>
+      </div>
     </div>
   );
 }
