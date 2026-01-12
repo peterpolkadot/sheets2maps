@@ -2,6 +2,17 @@
 
 import { useEffect, useState } from "react";
 
+/* ---------------- SAFE FIELD RESOLVER ---------------- */
+
+function getField(row, possibleKeys) {
+  for (const key of possibleKeys) {
+    if (row[key] !== undefined && row[key] !== null && row[key] !== "") {
+      return row[key];
+    }
+  }
+  return "";
+}
+
 export default function Map2() {
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
@@ -30,11 +41,17 @@ export default function Map2() {
         setRows(data);
 
         setEntities(
-          [...new Set(data.map(r => r.Entity).filter(Boolean))].sort()
+          [...new Set(
+            data.map(r => getField(r, ["Entity", "Entity "])).filter(Boolean)
+          )].sort()
         );
 
         setSuburbs(
-          [...new Set(data.map(r => r["Suburb / Town"]).filter(Boolean))].sort()
+          [...new Set(
+            data.map(r =>
+              getField(r, ["Suburb / Town", "Suburb/Town", "Suburb"])
+            ).filter(Boolean)
+          )].sort()
         );
       })
       .catch(err => setError(err.toString()));
@@ -50,11 +67,13 @@ export default function Map2() {
         const m = new google.maps.Map(document.getElementById("map2"), {
           zoom: 7,
           center: { lat: -37.4713, lng: 144.7852 },
-          styles: [{
-            featureType: "poi",
-            elementType: "labels",
-            stylers: [{ visibility: "off" }]
-          }]
+          styles: [
+            {
+              featureType: "poi",
+              elementType: "labels",
+              stylers: [{ visibility: "off" }]
+            }
+          ]
         });
 
         const iw = new google.maps.InfoWindow();
@@ -110,8 +129,8 @@ export default function Map2() {
         </div>
 
         <div class="field-grid">
-          ${field("Entity", item.Entity)}
-          ${field("Suburb / Town", item["Suburb / Town"])}
+          ${field("Entity", getField(item, ["Entity", "Entity "]))}
+          ${field("Suburb / Town", getField(item, ["Suburb / Town", "Suburb/Town", "Suburb"]))}
           ${field("Date of Valuation", item["Date of Valuation"])}
           ${field("Basis of Valuation", item["Basis of Valuation"])}
         </div>
@@ -126,18 +145,23 @@ export default function Map2() {
     let filtered = rows;
 
     if (selectedEntity) {
-      filtered = filtered.filter(r => r.Entity === selectedEntity);
+      filtered = filtered.filter(r =>
+        getField(r, ["Entity", "Entity "]) === selectedEntity
+      );
     }
 
     if (selectedSuburb) {
-      filtered = filtered.filter(r => r["Suburb / Town"] === selectedSuburb);
+      filtered = filtered.filter(r =>
+        getField(r, ["Suburb / Town", "Suburb/Town", "Suburb"]) === selectedSuburb
+      );
     }
 
     const grouped = {};
     filtered.forEach(r => {
-      if (!r["Site Name"]) return;
-      grouped[r["Site Name"]] ||= [];
-      grouped[r["Site Name"]].push(r);
+      const site = r["Site Name"];
+      if (!site) return;
+      grouped[site] ||= [];
+      grouped[site].push(r);
     });
 
     const newMarkers = [];
@@ -159,7 +183,9 @@ export default function Map2() {
         <div>
           <div class="iw-header">
             <h3 class="iw-title">${site}</h3>
-            <p class="iw-subtitle">${items[0]["Suburb / Town"] || ""}</p>
+            <p class="iw-subtitle">
+              ${getField(items[0], ["Suburb / Town", "Suburb/Town", "Suburb"])}
+            </p>
           </div>
           <div class="iw-content">
             ${buildingHTML(items[0])}
@@ -210,7 +236,9 @@ export default function Map2() {
               style={{ width: "100%", padding: 10 }}
             >
               <option value="">All</option>
-              {entities.map(e => <option key={e} value={e}>{e}</option>)}
+              {entities.map(e => (
+                <option key={e} value={e}>{e}</option>
+              ))}
             </select>
           </div>
 
@@ -222,7 +250,9 @@ export default function Map2() {
               style={{ width: "100%", padding: 10 }}
             >
               <option value="">All</option>
-              {suburbs.map(s => <option key={s} value={s}>{s}</option>)}
+              {suburbs.map(s => (
+                <option key={s} value={s}>{s}</option>
+              ))}
             </select>
           </div>
         </div>
