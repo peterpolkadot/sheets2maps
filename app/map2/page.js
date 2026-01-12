@@ -1,24 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-/* ---------------- SAFE FIELD RESOLVER ---------------- */
-
-function getField(row, possibleKeys) {
-  for (const key of possibleKeys) {
-    if (row[key] !== undefined && row[key] !== null && row[key] !== "") {
-      return row[key];
-    }
-  }
-  return "";
-}
+import { useEffect, useState, useMemo } from "react";
 
 export default function Map2() {
   const [rows, setRows] = useState([]);
   const [error, setError] = useState(null);
-
-  const [entities, setEntities] = useState([]);
-  const [suburbs, setSuburbs] = useState([]);
 
   const [selectedEntity, setSelectedEntity] = useState("");
   const [selectedSuburb, setSelectedSuburb] = useState("");
@@ -27,7 +13,7 @@ export default function Map2() {
   const [markers, setMarkers] = useState([]);
   const [infoWindow, setInfoWindow] = useState(null);
 
-  /* ---------------- LOAD DATA (SHEET 2) ---------------- */
+  /* ---------------- LOAD DATA ---------------- */
 
   useEffect(() => {
     fetch("/api/properties2")
@@ -37,25 +23,20 @@ export default function Map2() {
           setError(data.error);
           return;
         }
-
         setRows(data);
-
-        setEntities(
-          [...new Set(
-            data.map(r => getField(r, ["Entity", "Entity "])).filter(Boolean)
-          )].sort()
-        );
-
-        setSuburbs(
-          [...new Set(
-            data.map(r =>
-              getField(r, ["Suburb / Town", "Suburb/Town", "Suburb"])
-            ).filter(Boolean)
-          )].sort()
-        );
       })
       .catch(err => setError(err.toString()));
   }, []);
+
+  /* ---------------- DERIVED FILTER VALUES ---------------- */
+
+  const entities = useMemo(() => {
+    return [...new Set(rows.map(r => r.Entity).filter(Boolean))];
+  }, [rows]);
+
+  const suburbs = useMemo(() => {
+    return [...new Set(rows.map(r => r["Suburb / Town"]).filter(Boolean))].sort();
+  }, [rows]);
 
   /* ---------------- MAP INIT ---------------- */
 
@@ -66,7 +47,7 @@ export default function Map2() {
 
         const m = new google.maps.Map(document.getElementById("map2"), {
           zoom: 7,
-          center: { lat: -37.4713, lng: 144.7852 },
+          center: { lat: -27.47, lng: 153.03 },
           styles: [
             {
               featureType: "poi",
@@ -90,52 +71,13 @@ export default function Map2() {
   /* ---------------- MARKERS ---------------- */
 
   useEffect(() => {
-    if (map && infoWindow && rows.length) {
-      updateMarkers();
-    }
+    if (!map || !infoWindow || !rows.length) return;
+    updateMarkers();
   }, [map, infoWindow, rows, selectedEntity, selectedSuburb]);
 
   function formatCurrency(v) {
-    if (!v || v === 0) return "N/A";
-    if (typeof v === "string") return v;
-    return "$" + Number(v).toLocaleString();
-  }
-
-  function field(label, value) {
-    return `
-      <div class="field-box">
-        <div class="field-label">${label}</div>
-        <div class="field-value">${value || "N/A"}</div>
-      </div>
-    `;
-  }
-
-  function buildingHTML(item) {
-    return `
-      <div class="building-content active">
-        <div class="field-grid">
-          <div class="field-box">
-            <div class="field-label">Reinstatement Cost</div>
-            <div class="field-value-large">
-              ${formatCurrency(item["Reinstatement Cost\n($)"])}
-            </div>
-          </div>
-          <div class="field-box">
-            <div class="field-label">Inflation Provision</div>
-            <div class="field-value-large">
-              ${formatCurrency(item["Total Cost Inflation Provision\n($)"])}
-            </div>
-          </div>
-        </div>
-
-        <div class="field-grid">
-          ${field("Entity", getField(item, ["Entity", "Entity "]))}
-          ${field("Suburb / Town", getField(item, ["Suburb / Town", "Suburb/Town", "Suburb"]))}
-          ${field("Date of Valuation", item["Date of Valuation"])}
-          ${field("Basis of Valuation", item["Basis of Valuation"])}
-        </div>
-      </div>
-    `;
+    if (!v || v === "$-" || v === 0) return "N/A";
+    return v;
   }
 
   function updateMarkers() {
@@ -145,23 +87,18 @@ export default function Map2() {
     let filtered = rows;
 
     if (selectedEntity) {
-      filtered = filtered.filter(r =>
-        getField(r, ["Entity", "Entity "]) === selectedEntity
-      );
+      filtered = filtered.filter(r => r.Entity === selectedEntity);
     }
 
     if (selectedSuburb) {
-      filtered = filtered.filter(r =>
-        getField(r, ["Suburb / Town", "Suburb/Town", "Suburb"]) === selectedSuburb
-      );
+      filtered = filtered.filter(r => r["Suburb / Town"] === selectedSuburb);
     }
 
     const grouped = {};
     filtered.forEach(r => {
-      const site = r["Site Name"];
-      if (!site) return;
-      grouped[site] ||= [];
-      grouped[site].push(r);
+      if (!r["Site Name"]) return;
+      grouped[r["Site Name"]] ||= [];
+      grouped[r["Site Name"]].push(r);
     });
 
     const newMarkers = [];
@@ -183,12 +120,23 @@ export default function Map2() {
         <div>
           <div class="iw-header">
             <h3 class="iw-title">${site}</h3>
-            <p class="iw-subtitle">
-              ${getField(items[0], ["Suburb / Town", "Suburb/Town", "Suburb"])}
-            </p>
+            <p class="iw-subtitle">${items[0]["Suburb / Town"]}</p>
           </div>
           <div class="iw-content">
-            ${buildingHTML(items[0])}
+            <div class="field-grid">
+              <div class="field-box">
+                <div class="field-label">Reinstatement Cost</div>
+                <div class="field-value-large">
+                  ${formatCurrency(items[0]["Reinstatement Cost\n($)"])}
+                </div>
+              </div>
+              <div class="field-box">
+                <div class="field-label">Inflation Provision</div>
+                <div class="field-value-large">
+                  ${formatCurrency(items[0]["Total Cost Inflation Provision\n($)"])}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       `;
@@ -206,11 +154,11 @@ export default function Map2() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fa" }}>
-      <div style={{ background: "#006a8e", padding: "24px" }}>
+      <div style={{ background: "#006a8e", padding: 24 }}>
         <div style={{ maxWidth: 1400, margin: "0 auto", color: "white" }}>
           <h1 style={{ margin: 0, fontSize: 28 }}>Secondary Dashboard</h1>
-          <p style={{ margin: "4px 0 0 0", opacity: 0.9 }}>
-            Filter by Entity and Suburb
+          <p style={{ marginTop: 4, opacity: 0.9 }}>
+            Brisbane Catholic Education – Property Map
           </p>
         </div>
       </div>
