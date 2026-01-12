@@ -1,14 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState(false);
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const returnTo = searchParams.get('returnTo') || '/';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,8 +25,11 @@ export default function Login() {
       return;
     }
 
-    // Redirect to the page they were trying to access
-    window.location.href = returnTo;
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const returnTo = urlParams.get('returnTo') || '/';
+      window.location.href = returnTo;
+    }
   };
 
   return (
@@ -98,12 +97,6 @@ export default function Login() {
                 transition: "border-color 0.2s",
                 boxSizing: "border-box"
               }}
-              onFocus={(e) => {
-                if (!error) e.target.style.borderColor = "#006a8e";
-              }}
-              onBlur={(e) => {
-                if (!error) e.target.style.borderColor = "#e2e8f0";
-              }}
             />
             {error && (
               <p style={{
@@ -127,16 +120,7 @@ export default function Login() {
               borderRadius: "8px",
               fontSize: "16px",
               fontWeight: 600,
-              cursor: "pointer",
-              transition: "transform 0.2s, box-shadow 0.2s"
-            }}
-            onMouseOver={(e) => {
-              e.target.style.transform = "translateY(-1px)";
-              e.target.style.boxShadow = "0 4px 12px rgba(0,106,142,0.3)";
-            }}
-            onMouseOut={(e) => {
-              e.target.style.transform = "translateY(0)";
-              e.target.style.boxShadow = "none";
+              cursor: "pointer"
             }}
           >
             Access Dashboard

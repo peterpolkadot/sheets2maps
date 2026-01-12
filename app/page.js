@@ -15,16 +15,14 @@ export default function Home() {
             margin: "0 0 16px 0", 
             color: "white", 
             fontSize: 48, 
-            fontWeight: 700,
-            letterSpacing: "-1px"
+            fontWeight: 700
           }}>
             AVR CONSULTING
           </h1>
           <p style={{ 
             margin: 0, 
             color: "rgba(255,255,255,0.95)", 
-            fontSize: 20,
-            fontWeight: 500
+            fontSize: 20
           }}>
             Catholic Diocese Property Management System
           </p>
@@ -35,30 +33,15 @@ export default function Home() {
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: 32,
-          marginTop: 24
+          gap: 32
         }}>
-          {/* Map 1 Card */}
           <Link href="/map1" style={{ textDecoration: "none" }}>
             <div style={{
               background: "white",
               borderRadius: 16,
               padding: 32,
               boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-              transition: "all 0.3s ease",
-              cursor: "pointer",
-              border: "2px solid transparent",
-              height: "100%"
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 16px rgba(0,106,142,0.2)";
-              e.currentTarget.style.borderColor = "#006a8e";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 6px rgba(0,0,0,0.1)";
-              e.currentTarget.style.borderColor = "transparent";
+              cursor: "pointer"
             }}>
               <div style={{
                 width: 64,
@@ -86,10 +69,9 @@ export default function Home() {
               <p style={{
                 margin: 0,
                 fontSize: 15,
-                color: "#64748b",
-                lineHeight: 1.6
+                color: "#64748b"
               }}>
-                Interactive map showing property valuations, site details, and building information across all diocese locations.
+                Interactive map with property valuations and building information
               </p>
               
               <div style={{
@@ -110,27 +92,13 @@ export default function Home() {
             </div>
           </Link>
 
-          {/* Map 2 Card */}
           <Link href="/map2" style={{ textDecoration: "none" }}>
             <div style={{
               background: "white",
               borderRadius: 16,
               padding: 32,
               boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
-              transition: "all 0.3s ease",
-              cursor: "pointer",
-              border: "2px solid transparent",
-              height: "100%"
-            }}
-            onMouseOver={(e) => {
-              e.currentTarget.style.transform = "translateY(-4px)";
-              e.currentTarget.style.boxShadow = "0 8px 16px rgba(0,106,142,0.2)";
-              e.currentTarget.style.borderColor = "#006a8e";
-            }}
-            onMouseOut={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-              e.currentTarget.style.boxShadow = "0 4px 6px rgba(0,0,0,0.1)";
-              e.currentTarget.style.borderColor = "transparent";
+              cursor: "pointer"
             }}>
               <div style={{
                 width: 64,
@@ -158,10 +126,9 @@ export default function Home() {
               <p style={{
                 margin: 0,
                 fontSize: 15,
-                color: "#64748b",
-                lineHeight: 1.6
+                color: "#64748b"
               }}>
-                Additional property mapping and analytics dashboard for supplementary dataset visualization.
+                Additional property data and analytics
               </p>
               
               <div style={{
@@ -181,34 +148,6 @@ export default function Home() {
               </div>
             </div>
           </Link>
-        </div>
-
-        {/* Info Section */}
-        <div style={{
-          marginTop: 48,
-          padding: 32,
-          background: "white",
-          borderRadius: 16,
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
-        }}>
-          <h3 style={{
-            margin: "0 0 16px 0",
-            fontSize: 20,
-            fontWeight: 700,
-            color: "#006a8e"
-          }}>
-            About This System
-          </h3>
-          <p style={{
-            margin: 0,
-            fontSize: 15,
-            color: "#475569",
-            lineHeight: 1.7
-          }}>
-            This property management system provides secure access to diocese property information including valuations, 
-            site locations, building details, and comprehensive data analysis. Each dashboard is password protected 
-            to ensure confidential information remains secure.
-          </p>
         </div>
       </div>
     </div>

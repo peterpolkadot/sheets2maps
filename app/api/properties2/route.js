@@ -7,8 +7,6 @@ export async function GET() {
     return NextResponse.json(rows);
   } catch (err) {
     console.error("API Error:", err);
-    return NextResponse.json({ 
-      error: err.message || err.toString()
-    }, { status: 500 });
+    return NextResponse.json({ error: err.message || err.toString() }, { status: 500 });
   }
 }
