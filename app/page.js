@@ -74,7 +74,7 @@ export default function Home() {
                   fontWeight: 600,
                   color: "#92400e"
                 }}>
-                  🔒 Password Protected
+                  🔒 ENTER
                 </span>
               </div>
             </div>
@@ -119,7 +119,7 @@ export default function Home() {
                   fontWeight: 600,
                   color: "#92400e"
                 }}>
-                  🔒 Password Protected
+                  🔒 ENTER
                 </span>
               </div>
             </div>
