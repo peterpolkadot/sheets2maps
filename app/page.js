@@ -43,19 +43,7 @@ export default function Home() {
               boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
               cursor: "pointer"
             }}>
-              <div style={{
-                width: 64,
-                height: 64,
-                borderRadius: 12,
-                background: "linear-gradient(135deg, #006a8e 0%, #008bb3 100%)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 20,
-                fontSize: 32
-              }}>
-                🗺️
-              </div>
+  
               
               <h2 style={{
                 margin: "0 0 12px 0",
@@ -63,7 +51,7 @@ export default function Home() {
                 fontWeight: 700,
                 color: "#006a8e"
               }}>
-                Property Dashboard
+                Property Dashboard 1
               </h2>
               
               <p style={{
@@ -71,7 +59,7 @@ export default function Home() {
                 fontSize: 15,
                 color: "#64748b"
               }}>
-                Interactive map with property valuations and building information
+                Catholic Diocese of Sale
               </p>
               
               <div style={{
@@ -100,19 +88,7 @@ export default function Home() {
               boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
               cursor: "pointer"
             }}>
-              <div style={{
-                width: 64,
-                height: 64,
-                borderRadius: 12,
-                background: "linear-gradient(135deg, #006a8e 0%, #008bb3 100%)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                marginBottom: 20,
-                fontSize: 32
-              }}>
-                📊
-              </div>
+        
               
               <h2 style={{
                 margin: "0 0 12px 0",
@@ -128,7 +104,7 @@ export default function Home() {
                 fontSize: 15,
                 color: "#64748b"
               }}>
-                Additional property data and analytics
+                Brisbane Catholic Education
               </p>
               
               <div style={{
