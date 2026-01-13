@@ -84,22 +84,7 @@ export async function POST(req) {
             font-size: 13px;
             text-align: right;
             flex: 1;
-          }
-          .highlight-row {
-            background: #e0f2fe;
-            padding: 16px;
-            margin-bottom: 10px;
-            border-radius: 6px;
-            border-left: 4px solid #006a8e;
-          }
-          .highlight-row .field-label {
-            color: #006a8e;
-            font-size: 14px;
-          }
-          .highlight-row .field-value {
-            color: #006a8e;
-            font-size: 16px;
-            font-weight: 700;
+            word-break: break-word;
           }
           .attachment-notice {
             background: #fef3c7;
@@ -127,7 +112,7 @@ export async function POST(req) {
         <div class="container">
           <div class="header">
             <h1>AVR CONSULTING</h1>
-            <p>Property Valuation Report</p>
+            <p>Property Report</p>
           </div>
           
           <div class="content">
@@ -149,31 +134,6 @@ export async function POST(req) {
                 <span class="field-label">Address</span>
                 <span class="field-value">${propertyData.address}</span>
               </div>
-            </div>
-
-            <div class="section">
-              <div class="section-title">Valuation Information</div>
-              
-              <div class="highlight-row" style="display: flex; justify-content: space-between; gap: 20px;">
-                <span class="field-label">Recommended Sum Insured</span>
-                <span class="field-value">${propertyData.recommendedSumInsured}</span>
-              </div>
-              
-              <div class="highlight-row" style="display: flex; justify-content: space-between; gap: 20px;">
-                <span class="field-label">Reinstatement Cost</span>
-                <span class="field-value">${propertyData.reinstatementCost}</span>
-              </div>
-              
-              <div class="field-row">
-                <span class="field-label">Total Cost Inflation Provision</span>
-                <span class="field-value">${propertyData.inflationProvision}</span>
-              </div>
-              
-              <div class="field-row">
-                <span class="field-label">Demolition & Removal of Debris</span>
-                <span class="field-value">${propertyData.demolitionCost}</span>
-              </div>
-              
               <div class="field-row">
                 <span class="field-label">Date of Valuation</span>
                 <span class="field-value">${propertyData.dateOfValuation}</span>
