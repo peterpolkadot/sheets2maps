@@ -270,7 +270,6 @@ export default function Map1() {
         } : null
       });
 
-      const firstBuilding = buildings[0];
       const propertyData = {
         siteName: siteName,
         buildingName: firstBuilding["Building Name"] || "",
