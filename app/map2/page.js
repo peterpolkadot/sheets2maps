@@ -8,10 +8,12 @@ export default function Map2() {
 
   const [entities, setEntities] = useState([]);
   const [siteNames, setSiteNames] = useState([]);
+  const [buildingNames, setBuildingNames] = useState([]);
   const [suburbs, setSuburbs] = useState([]);
 
   const [selectedEntity, setSelectedEntity] = useState("");
   const [selectedSiteName, setSelectedSiteName] = useState("");
+  const [selectedBuildingName, setSelectedBuildingName] = useState("");
   const [selectedSuburb, setSelectedSuburb] = useState("");
 
   const [map, setMap] = useState(null);
@@ -39,6 +41,9 @@ export default function Map2() {
 
         const uniqueSiteNames = [...new Set(data.map(item => item["Site Name"]).filter(Boolean))];
         setSiteNames(uniqueSiteNames.sort());
+
+        const uniqueBuildingNames = [...new Set(data.map(item => item["Building Name"]).filter(Boolean))];
+        setBuildingNames(uniqueBuildingNames.sort());
 
         const uniqueSuburbs = [...new Set(data.map(item => item["Suburb / Town"]).filter(Boolean))];
         setSuburbs(uniqueSuburbs.sort());
@@ -77,7 +82,13 @@ export default function Map2() {
   useEffect(() => {
     if (!map || !infoWindow || rows.length === 0) return;
     updateMarkers();
-  }, [map, infoWindow, rows, selectedEntity, selectedSiteName, selectedSuburb]);
+  }, [map, infoWindow, rows, selectedEntity, selectedSiteName, selectedBuildingName, selectedSuburb]);
+
+  function formatCurrency(value) {
+    if (!value || value === 0 || value === "$-" || value === "-") return "Not yet valued";
+    if (typeof value === 'string' && value.startsWith('$')) return value;
+    return "$" + value.toLocaleString();
+  }
 
   function updateMarkers() {
     markers.forEach(m => m.setMap(null));
@@ -85,7 +96,7 @@ export default function Map2() {
       infoWindow.close();
     }
 
-    if (!selectedEntity && !selectedSiteName && !selectedSuburb) {
+    if (!selectedEntity && !selectedSiteName && !selectedBuildingName && !selectedSuburb) {
       setMarkers([]);
       return;
     }
@@ -98,6 +109,10 @@ export default function Map2() {
 
     if (selectedSiteName) {
       filtered = filtered.filter(item => item["Site Name"] === selectedSiteName);
+    }
+
+    if (selectedBuildingName) {
+      filtered = filtered.filter(item => item["Building Name"] === selectedBuildingName);
     }
 
     if (selectedSuburb) {
@@ -140,13 +155,43 @@ export default function Map2() {
         <div>
           <div class="iw-header">
             <h3 class="iw-title">${siteName}</h3>
+            <p class="iw-subtitle">${firstBuilding["Building Name"] || ""}</p>
           </div>
           <div class="iw-content">
+            <div class="field-grid">
+              <div class="field-box">
+                <div class="field-label">Recommended Sum Insured</div>
+                <div class="field-value-large">${formatCurrency(firstBuilding["Recommended Sum Insured ($)"])}</div>
+              </div>
+              <div class="field-box">
+                <div class="field-label">Reinstatement Cost</div>
+                <div class="field-value-large">${formatCurrency(firstBuilding["Reinstatement Cost ($)"])}</div>
+              </div>
+            </div>
+            
+            <div class="field-grid">
+              <div class="field-box">
+                <div class="field-label">Total Cost Inflation Provision</div>
+                <div class="field-value">${formatCurrency(firstBuilding["Total Cost Inflation Provision ($)"])}</div>
+              </div>
+              <div class="field-box">
+                <div class="field-label">Demolition & Removal of Debris</div>
+                <div class="field-value">${formatCurrency(firstBuilding["Demolition and Removal of Debris ($)"])}</div>
+              </div>
+            </div>
+
             <div class="field-grid">
               <div class="field-box">
                 <div class="field-label">Entity</div>
                 <div class="field-value">${firstBuilding["Entity"] || "N/A"}</div>
               </div>
+              <div class="field-box">
+                <div class="field-label">Date of Valuation</div>
+                <div class="field-value">${firstBuilding["Date of Valuation"] || "N/A"}</div>
+              </div>
+            </div>
+
+            <div class="field-grid">
               <div class="field-box">
                 <div class="field-label">Suburb / Town</div>
                 <div class="field-value">${firstBuilding["Suburb / Town"] || "N/A"}</div>
@@ -171,6 +216,7 @@ export default function Map2() {
     setSelectedEntity(value);
     if (value) {
       setSelectedSiteName("");
+      setSelectedBuildingName("");
       setSelectedSuburb("");
     }
   };
@@ -179,6 +225,16 @@ export default function Map2() {
     setSelectedSiteName(value);
     if (value) {
       setSelectedEntity("");
+      setSelectedBuildingName("");
+      setSelectedSuburb("");
+    }
+  };
+
+  const handleBuildingNameChange = (value) => {
+    setSelectedBuildingName(value);
+    if (value) {
+      setSelectedEntity("");
+      setSelectedSiteName("");
       setSelectedSuburb("");
     }
   };
@@ -188,16 +244,18 @@ export default function Map2() {
     if (value) {
       setSelectedEntity("");
       setSelectedSiteName("");
+      setSelectedBuildingName("");
     }
   };
 
   const clearFilters = () => {
     setSelectedEntity("");
     setSelectedSiteName("");
+    setSelectedBuildingName("");
     setSelectedSuburb("");
   };
 
-  const hasActiveFilters = selectedEntity || selectedSiteName || selectedSuburb;
+  const hasActiveFilters = selectedEntity || selectedSiteName || selectedBuildingName || selectedSuburb;
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fa" }}>
@@ -352,6 +410,40 @@ export default function Map2() {
               >
                 <option value="">All Sites</option>
                 {siteNames.map(name => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label style={{ 
+                display: "block",
+                marginBottom: 8,
+                fontSize: 13,
+                fontWeight: 700,
+                color: "#006a8e",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>
+                Building Name
+              </label>
+              <select 
+                value={selectedBuildingName} 
+                onChange={(e) => handleBuildingNameChange(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  fontSize: 15,
+                  borderRadius: 8,
+                  border: "2px solid #e0f2fe",
+                  background: "white",
+                  cursor: "pointer",
+                  transition: "border-color 0.2s",
+                  outline: "none"
+                }}
+              >
+                <option value="">All Buildings</option>
+                {buildingNames.map(name => (
                   <option key={name} value={name}>{name}</option>
                 ))}
               </select>
