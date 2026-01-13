@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
 
 export function middleware(request) {
-  const isProtectedRoute = request.nextUrl.pathname.startsWith('/map1') || 
-                           request.nextUrl.pathname.startsWith('/map2');
-  
-  if (!isProtectedRoute) {
+  // Skip API routes
+  if (request.nextUrl.pathname.startsWith('/api/')) {
     return NextResponse.next();
   }
 
-  if (request.nextUrl.pathname.startsWith('/api/')) {
+  // Skip login page itself
+  if (request.nextUrl.pathname === '/login') {
     return NextResponse.next();
   }
 
@@ -24,11 +23,12 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
+  // Redirect to login for any protected route
   const loginUrl = new URL('/login', request.url);
   loginUrl.searchParams.set('returnTo', request.nextUrl.pathname);
   return NextResponse.redirect(loginUrl);
 }
 
 export const config = {
-  matcher: ['/map1/:path*', '/map2/:path*'],
+  matcher: ['/', '/map1/:path*', '/map2/:path*'],
 };
