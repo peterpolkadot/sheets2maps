@@ -240,7 +240,8 @@ export default function Map2() {
         reinstatementCost: formatCurrency(firstBuilding["Reinstatement Cost ($)"]),
         inflationProvision: formatCurrency(firstBuilding["Total Cost Inflation Provision ($)"]),
         demolitionCost: formatCurrency(firstBuilding["Demolition and Removal of Debris ($)"]),
-        dateOfValuation: formatDate(firstBuilding["Date of Valuation"])
+        dateOfValuation: formatDate(firstBuilding["Date of Valuation"]),
+        allData: firstBuilding
       };
 
       const html = `
@@ -685,7 +686,7 @@ export default function Map2() {
           fontWeight: 600,
           textDecoration: "none"
         }}>
-          [home]
+          ← Back to Home
         </Link>
       </div>
 

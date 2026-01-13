@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { sendEmail } from "../../../lib/graphClient";
+import { sendEmailWithAttachment } from "../../../lib/graphClient";
+import { generatePropertyPDF } from "../../../lib/pdfGenerator";
 
 export async function POST(req) {
   try {
@@ -10,23 +11,117 @@ export async function POST(req) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    // Generate PDF
+    const pdfBuffer = await generatePropertyPDF(propertyData);
+    const pdfBase64 = pdfBuffer.toString('base64');
+
     const htmlContent = `
       <!DOCTYPE html>
       <html>
       <head>
         <style>
-          body { font-family: 'Inter', Arial, sans-serif; background: #f8f9fa; margin: 0; padding: 20px; }
-          .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-          .header { background: linear-gradient(135deg, #006a8e 0%, #008bb3 100%); padding: 30px; color: white; text-align: center; }
-          .header h1 { margin: 0; font-size: 28px; }
-          .header p { margin: 8px 0 0 0; font-size: 14px; opacity: 0.9; }
-          .content { padding: 30px; }
-          .section { margin-bottom: 30px; }
-          .section-title { font-size: 18px; color: #006a8e; font-weight: 700; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e0f2fe; }
-          .field-row { display: flex; justify-content: space-between; padding: 12px; background: #f8f9fa; margin-bottom: 8px; border-radius: 6px; }
-          .field-label { font-weight: 600; color: #64748b; font-size: 13px; }
-          .field-value { color: #000; font-weight: 600; font-size: 13px; }
-          .footer { background: #f8f9fa; padding: 20px; text-align: center; color: #64748b; font-size: 12px; }
+          body { 
+            font-family: 'Inter', Arial, sans-serif; 
+            background: #f8f9fa; 
+            margin: 0; 
+            padding: 20px; 
+            line-height: 1.6;
+          }
+          .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white; 
+            border-radius: 12px; 
+            overflow: hidden; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+          }
+          .header { 
+            background: linear-gradient(135deg, #006a8e 0%, #008bb3 100%); 
+            padding: 30px; 
+            color: white; 
+            text-align: center; 
+          }
+          .header h1 { 
+            margin: 0; 
+            font-size: 28px; 
+          }
+          .header p { 
+            margin: 8px 0 0 0; 
+            font-size: 14px; 
+            opacity: 0.9; 
+          }
+          .content { 
+            padding: 30px; 
+          }
+          .section { 
+            margin-bottom: 30px; 
+          }
+          .section-title { 
+            font-size: 18px; 
+            color: #006a8e; 
+            font-weight: 700; 
+            margin-bottom: 16px; 
+            padding-bottom: 8px; 
+            border-bottom: 2px solid #e0f2fe; 
+          }
+          .field-row { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 14px; 
+            background: #f8f9fa; 
+            margin-bottom: 10px; 
+            border-radius: 6px;
+            gap: 20px;
+          }
+          .field-label { 
+            font-weight: 600; 
+            color: #64748b; 
+            font-size: 13px;
+            flex: 0 0 45%;
+          }
+          .field-value { 
+            color: #000; 
+            font-weight: 600; 
+            font-size: 13px;
+            text-align: right;
+            flex: 1;
+          }
+          .highlight-row {
+            background: #e0f2fe;
+            padding: 16px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #006a8e;
+          }
+          .highlight-row .field-label {
+            color: #006a8e;
+            font-size: 14px;
+          }
+          .highlight-row .field-value {
+            color: #006a8e;
+            font-size: 16px;
+            font-weight: 700;
+          }
+          .attachment-notice {
+            background: #fef3c7;
+            padding: 16px;
+            border-radius: 6px;
+            border-left: 4px solid #f59e0b;
+            margin-top: 20px;
+          }
+          .attachment-notice p {
+            margin: 0;
+            color: #92400e;
+            font-size: 13px;
+            font-weight: 600;
+          }
+          .footer { 
+            background: #f8f9fa; 
+            padding: 20px; 
+            text-align: center; 
+            color: #64748b; 
+            font-size: 12px; 
+          }
         </style>
       </head>
       <body>
@@ -59,26 +154,35 @@ export async function POST(req) {
 
             <div class="section">
               <div class="section-title">Valuation Information</div>
-              <div class="field-row">
+              
+              <div class="highlight-row" style="display: flex; justify-content: space-between; gap: 20px;">
                 <span class="field-label">Recommended Sum Insured</span>
                 <span class="field-value">${propertyData.recommendedSumInsured}</span>
               </div>
-              <div class="field-row">
+              
+              <div class="highlight-row" style="display: flex; justify-content: space-between; gap: 20px;">
                 <span class="field-label">Reinstatement Cost</span>
                 <span class="field-value">${propertyData.reinstatementCost}</span>
               </div>
+              
               <div class="field-row">
                 <span class="field-label">Total Cost Inflation Provision</span>
                 <span class="field-value">${propertyData.inflationProvision}</span>
               </div>
+              
               <div class="field-row">
                 <span class="field-label">Demolition & Removal of Debris</span>
                 <span class="field-value">${propertyData.demolitionCost}</span>
               </div>
+              
               <div class="field-row">
                 <span class="field-label">Date of Valuation</span>
                 <span class="field-value">${propertyData.dateOfValuation}</span>
               </div>
+            </div>
+
+            <div class="attachment-notice">
+              <p>📎 A detailed PDF report with complete property information is attached to this email.</p>
             </div>
           </div>
 
@@ -91,10 +195,15 @@ export async function POST(req) {
       </html>
     `;
 
-    await sendEmail(
+    await sendEmailWithAttachment(
       recipientEmail,
       `Property Report - ${propertyData.siteName}`,
-      htmlContent
+      htmlContent,
+      {
+        filename: `Property_Report_${propertyData.siteName.replace(/[^a-z0-9]/gi, '_')}.pdf`,
+        content: pdfBase64,
+        contentType: 'application/pdf'
+      }
     );
 
     return NextResponse.json({ success: true });

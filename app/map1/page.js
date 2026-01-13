@@ -600,7 +600,7 @@ export default function Map1() {
           fontWeight: 600,
           textDecoration: "none"
         }}>
-          [home]
+          ← Back to Home
         </Link>
       </div>
     </div>
