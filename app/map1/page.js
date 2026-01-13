@@ -76,6 +76,22 @@ export default function Map1() {
     return "$" + value.toLocaleString();
   }
 
+  function excelDateToJSDate(serial) {
+    if (!serial || isNaN(serial)) return null;
+    const utc_days = Math.floor(serial - 25569);
+    const utc_value = utc_days * 86400;
+    const date_info = new Date(utc_value * 1000);
+    return date_info;
+  }
+
+  function formatDate(value) {
+    if (!value) return "N/A";
+    if (typeof value === 'string' && value.includes('/')) return value;
+    const date = excelDateToJSDate(value);
+    if (!date) return "N/A";
+    return date.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
   function handleEmailReport(propertyData) {
     setCurrentPropertyData(propertyData);
     setShowEmailModal(true);
@@ -283,7 +299,7 @@ export default function Map1() {
         reinstatementCost: formatCurrency(firstBuilding["Reinstatement Cost\n($)"]),
         inflationProvision: formatCurrency(firstBuilding["Total Cost Inflation Provision ($)"] || 0),
         demolitionCost: formatCurrency(firstBuilding["Demolition and Removal of Debris ($)"] || 0),
-        dateOfValuation: firstBuilding["Date of Valuation"] || "N/A",
+        dateOfValuation: formatDate(firstBuilding["Date of Valuation"]),
         allData: firstBuilding
       };
 

@@ -11,6 +11,21 @@ export async function POST(req) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
+    // Format date if it's an Excel serial number
+    function formatDateValue(value) {
+      if (!value) return "N/A";
+      if (typeof value === 'string' && value.includes('/')) return value;
+      if (typeof value === 'number') {
+        const utc_days = Math.floor(value - 25569);
+        const utc_value = utc_days * 86400;
+        const date = new Date(utc_value * 1000);
+        return date.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
+      }
+      return value;
+    }
+
+    const formattedDate = formatDateValue(propertyData.dateOfValuation);
+
     // Generate PDF (returns base64 string)
     const pdfBase64 = generatePropertyPDF(propertyData);
 
@@ -71,12 +86,14 @@ export async function POST(req) {
             margin-bottom: 10px; 
             border-radius: 6px;
             gap: 20px;
+            align-items: flex-start;
           }
           .field-label { 
             font-weight: 600; 
             color: #64748b; 
             font-size: 13px;
             flex: 0 0 45%;
+            display: block;
           }
           .field-value { 
             color: #000; 
@@ -85,6 +102,7 @@ export async function POST(req) {
             text-align: right;
             flex: 1;
             word-break: break-word;
+            display: block;
           }
           .attachment-notice {
             background: #fef3c7;
@@ -136,7 +154,7 @@ export async function POST(req) {
               </div>
               <div class="field-row">
                 <span class="field-label">Date of Valuation</span>
-                <span class="field-value">${propertyData.dateOfValuation}</span>
+                <span class="field-value">${formattedDate}</span>
               </div>
             </div>
 
