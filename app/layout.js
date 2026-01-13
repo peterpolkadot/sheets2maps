@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Catholic Diocese Property Dashboard",
+  title: "Client Property Management Dashboards",
   description: "Interactive property valuation mapping system."
 };
 

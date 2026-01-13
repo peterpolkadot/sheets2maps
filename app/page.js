@@ -24,7 +24,7 @@ export default function Home() {
             color: "rgba(255,255,255,0.95)", 
             fontSize: 20
           }}>
-            Catholic Diocese Property Management System
+           Client Property Management Dashboards
           </p>
         </div>
       </div>
@@ -51,7 +51,7 @@ export default function Home() {
                 fontWeight: 700,
                 color: "#006a8e"
               }}>
-                Property Dashboard 1
+                Property Dashboard
               </h2>
               
               <p style={{
@@ -96,7 +96,7 @@ export default function Home() {
                 fontWeight: 700,
                 color: "#006a8e"
               }}>
-                Secondary Dashboard
+               Property Dashboard
               </h2>
               
               <p style={{

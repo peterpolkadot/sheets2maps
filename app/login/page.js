@@ -65,7 +65,7 @@ export default function Login() {
           color: "#64748b",
           textAlign: "center"
         }}>
-          Catholic Diocese Property Dashboard
+         AVR Consulting Client Property Management Dashboards
         </p>
 
         <form onSubmit={handleSubmit}>
