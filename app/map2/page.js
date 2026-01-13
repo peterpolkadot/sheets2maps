@@ -10,11 +10,13 @@ export default function Map2() {
   const [siteNames, setSiteNames] = useState([]);
   const [buildingNames, setBuildingNames] = useState([]);
   const [suburbs, setSuburbs] = useState([]);
+  const [dates, setDates] = useState([]);
 
   const [selectedEntity, setSelectedEntity] = useState("");
   const [selectedSiteName, setSelectedSiteName] = useState("");
   const [selectedBuildingName, setSelectedBuildingName] = useState("");
   const [selectedSuburb, setSelectedSuburb] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
 
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
@@ -47,6 +49,9 @@ export default function Map2() {
 
         const uniqueSuburbs = [...new Set(data.map(item => item["Suburb / Town"]).filter(Boolean))];
         setSuburbs(uniqueSuburbs.sort());
+
+        const uniqueDates = [...new Set(data.map(item => item["Date of Valuation"]).filter(Boolean))];
+        setDates(uniqueDates.sort());
       })
       .catch(err => setError(err.toString()));
   }, []);
@@ -82,7 +87,23 @@ export default function Map2() {
   useEffect(() => {
     if (!map || !infoWindow || rows.length === 0) return;
     updateMarkers();
-  }, [map, infoWindow, rows, selectedEntity, selectedSiteName, selectedBuildingName, selectedSuburb]);
+  }, [map, infoWindow, rows, selectedEntity, selectedSiteName, selectedBuildingName, selectedSuburb, selectedDate]);
+
+  function excelDateToJSDate(serial) {
+    if (!serial || isNaN(serial)) return null;
+    const utc_days = Math.floor(serial - 25569);
+    const utc_value = utc_days * 86400;
+    const date_info = new Date(utc_value * 1000);
+    return date_info;
+  }
+
+  function formatDate(value) {
+    if (!value) return "N/A";
+    if (typeof value === 'string' && value.includes('/')) return value;
+    const date = excelDateToJSDate(value);
+    if (!date) return "N/A";
+    return date.toLocaleDateString('en-AU', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
 
   function formatCurrency(value) {
     if (!value || value === 0 || value === "$-" || value === "-") return "Not yet valued";
@@ -96,7 +117,7 @@ export default function Map2() {
       infoWindow.close();
     }
 
-    if (!selectedEntity && !selectedSiteName && !selectedBuildingName && !selectedSuburb) {
+    if (!selectedEntity && !selectedSiteName && !selectedBuildingName && !selectedSuburb && !selectedDate) {
       setMarkers([]);
       return;
     }
@@ -117,6 +138,10 @@ export default function Map2() {
 
     if (selectedSuburb) {
       filtered = filtered.filter(item => item["Suburb / Town"] === selectedSuburb);
+    }
+
+    if (selectedDate) {
+      filtered = filtered.filter(item => item["Date of Valuation"] === selectedDate);
     }
 
     const groupedBySite = {};
@@ -160,41 +185,47 @@ export default function Map2() {
           <div class="iw-content">
             <div class="field-grid">
               <div class="field-box">
-                <div class="field-label">Recommended Sum Insured</div>
-                <div class="field-value-large">${formatCurrency(firstBuilding["Recommended Sum Insured ($)"])}</div>
-              </div>
-              <div class="field-box">
-                <div class="field-label">Reinstatement Cost</div>
-                <div class="field-value-large">${formatCurrency(firstBuilding["Reinstatement Cost ($)"])}</div>
-              </div>
-            </div>
-            
-            <div class="field-grid">
-              <div class="field-box">
-                <div class="field-label">Total Cost Inflation Provision</div>
-                <div class="field-value">${formatCurrency(firstBuilding["Total Cost Inflation Provision ($)"])}</div>
-              </div>
-              <div class="field-box">
-                <div class="field-label">Demolition & Removal of Debris</div>
-                <div class="field-value">${formatCurrency(firstBuilding["Demolition and Removal of Debris ($)"])}</div>
-              </div>
-            </div>
-
-            <div class="field-grid">
-              <div class="field-box">
                 <div class="field-label">Entity</div>
                 <div class="field-value">${firstBuilding["Entity"] || "N/A"}</div>
               </div>
               <div class="field-box">
-                <div class="field-label">Date of Valuation</div>
-                <div class="field-value">${firstBuilding["Date of Valuation"] || "N/A"}</div>
+                <div class="field-label">Address</div>
+                <div class="field-value">${[
+                  firstBuilding["Street"],
+                  firstBuilding["Suburb / Town"],
+                  firstBuilding["Post Code"]
+                ].filter(Boolean).join(", ")}</div>
               </div>
             </div>
 
-            <div class="field-grid">
-              <div class="field-box">
-                <div class="field-label">Suburb / Town</div>
-                <div class="field-value">${firstBuilding["Suburb / Town"] || "N/A"}</div>
+            <div style="margin: 16px 0; border-top: 2px solid #e0f2fe; padding-top: 16px;">
+              <div class="field-grid">
+                <div class="field-box">
+                  <div class="field-label">Recommended Sum Insured</div>
+                  <div class="field-value-large">${formatCurrency(firstBuilding["Recommended Sum Insured ($)"])}</div>
+                </div>
+                <div class="field-box">
+                  <div class="field-label">Reinstatement Cost</div>
+                  <div class="field-value-large">${formatCurrency(firstBuilding["Reinstatement Cost ($)"])}</div>
+                </div>
+              </div>
+              
+              <div class="field-grid">
+                <div class="field-box">
+                  <div class="field-label">Total Cost Inflation Provision</div>
+                  <div class="field-value">${formatCurrency(firstBuilding["Total Cost Inflation Provision ($)"])}</div>
+                </div>
+                <div class="field-box">
+                  <div class="field-label">Demolition & Removal of Debris</div>
+                  <div class="field-value">${formatCurrency(firstBuilding["Demolition and Removal of Debris ($)"])}</div>
+                </div>
+              </div>
+
+              <div class="field-grid">
+                <div class="field-box">
+                  <div class="field-label">Date of Valuation</div>
+                  <div class="field-value">${formatDate(firstBuilding["Date of Valuation"])}</div>
+                </div>
               </div>
             </div>
           </div>
