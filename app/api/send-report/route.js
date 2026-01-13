@@ -11,9 +11,8 @@ export async function POST(req) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Generate PDF
-    const pdfBuffer = await generatePropertyPDF(propertyData);
-    const pdfBase64 = pdfBuffer.toString('base64');
+    // Generate PDF (returns base64 string)
+    const pdfBase64 = generatePropertyPDF(propertyData);
 
     const htmlContent = `
       <!DOCTYPE html>
