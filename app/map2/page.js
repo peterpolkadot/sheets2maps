@@ -249,6 +249,7 @@ export default function Map2() {
       setSelectedSiteName("");
       setSelectedBuildingName("");
       setSelectedSuburb("");
+      setSelectedDate("");
     }
   };
 
@@ -258,6 +259,7 @@ export default function Map2() {
       setSelectedEntity("");
       setSelectedBuildingName("");
       setSelectedSuburb("");
+      setSelectedDate("");
     }
   };
 
@@ -267,6 +269,7 @@ export default function Map2() {
       setSelectedEntity("");
       setSelectedSiteName("");
       setSelectedSuburb("");
+      setSelectedDate("");
     }
   };
 
@@ -276,6 +279,17 @@ export default function Map2() {
       setSelectedEntity("");
       setSelectedSiteName("");
       setSelectedBuildingName("");
+      setSelectedDate("");
+    }
+  };
+
+  const handleDateChange = (value) => {
+    setSelectedDate(value);
+    if (value) {
+      setSelectedEntity("");
+      setSelectedSiteName("");
+      setSelectedBuildingName("");
+      setSelectedSuburb("");
     }
   };
 
@@ -284,9 +298,10 @@ export default function Map2() {
     setSelectedSiteName("");
     setSelectedBuildingName("");
     setSelectedSuburb("");
+    setSelectedDate("");
   };
 
-  const hasActiveFilters = selectedEntity || selectedSiteName || selectedBuildingName || selectedSuburb;
+  const hasActiveFilters = selectedEntity || selectedSiteName || selectedBuildingName || selectedSuburb || selectedDate;
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fa" }}>
@@ -375,7 +390,7 @@ export default function Map2() {
 
           <div style={{ 
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
             gap: 16
           }}>
             <div>
@@ -510,6 +525,40 @@ export default function Map2() {
                 <option value="">All Suburbs</option>
                 {suburbs.map(suburb => (
                   <option key={suburb} value={suburb}>{suburb}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label style={{ 
+                display: "block",
+                marginBottom: 8,
+                fontSize: 13,
+                fontWeight: 700,
+                color: "#006a8e",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>
+                Date of Valuation
+              </label>
+              <select 
+                value={selectedDate} 
+                onChange={(e) => handleDateChange(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  fontSize: 15,
+                  borderRadius: 8,
+                  border: "2px solid #e0f2fe",
+                  background: "white",
+                  cursor: "pointer",
+                  transition: "border-color 0.2s",
+                  outline: "none"
+                }}
+              >
+                <option value="">All Dates</option>
+                {dates.map(date => (
+                  <option key={date} value={date}>{formatDate(date)}</option>
                 ))}
               </select>
             </div>
