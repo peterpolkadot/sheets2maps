@@ -140,9 +140,9 @@ export default function Map2() {
       filtered = filtered.filter(item => item["Suburb / Town"] === selectedSuburb);
     }
 
-    if (selectedDate) {
-      filtered = filtered.filter(item => item["Date of Valuation"] === selectedDate);
-    }
+if (selectedDate) {
+  filtered = filtered.filter(item => Number(item["Date of Valuation"]) === Number(selectedDate));
+}
 
     const groupedBySite = {};
 
