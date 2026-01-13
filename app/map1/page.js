@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Map1() {
   const [rows, setRows] = useState([]);
@@ -358,7 +359,7 @@ export default function Map1() {
             color: "rgba(255,255,255,0.9)", 
             fontSize: 16 
           }}>
-            Catholic Diocese Property Valuation System
+            Catholic Diocese of Sale
           </p>
         </div>
       </div>
@@ -586,6 +587,21 @@ export default function Map1() {
             )}
           </div>
         </div>
+      </div>
+
+      <div style={{ 
+        textAlign: "center", 
+        padding: "40px 24px",
+        background: "#f8f9fa" 
+      }}>
+        <Link href="/" style={{
+          color: "#006a8e",
+          fontSize: 14,
+          fontWeight: 600,
+          textDecoration: "none"
+        }}>
+          [home]
+        </Link>
       </div>
     </div>
   );

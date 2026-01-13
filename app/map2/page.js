@@ -275,7 +275,7 @@ export default function Map2() {
                   <div class="field-value-large">${formatCurrency(firstBuilding["Reinstatement Cost ($)"])}</div>
                 </div>
               </div>
-              
+
  <div class="field-grid">
                 <div class="field-box">
                   <div class="field-label">Total Cost Inflation Provision</div>
@@ -410,14 +410,14 @@ export default function Map2() {
             fontWeight: 700,
             letterSpacing: "-0.5px"
           }}>
-            Secondary Dashboard
+            Property Dashboard
           </h1>
           <p style={{ 
             margin: 0, 
             color: "rgba(255,255,255,0.9)", 
             fontSize: 16 
           }}>
-            Brisbane Catholic Education Property System
+            Brisbane Catholic Education
           </p>
         </div>
       </div>
