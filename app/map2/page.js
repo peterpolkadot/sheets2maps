@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function Map2() {
   const [rows, setRows] = useState([]);
@@ -276,18 +277,11 @@ export default function Map2() {
                 </div>
               </div>
 
- <div class="field-grid">
+              <div class="field-grid">
                 <div class="field-box">
                   <div class="field-label">Total Cost Inflation Provision</div>
                   <div class="field-value">${formatCurrency(firstBuilding["Total Cost Inflation Provision ($)"])}</div>
                 </div>
-                <div class="field-box">
-                  <div class="field-label">Date of Valuation</div>
-                  <div class="field-value">${formatDate(firstBuilding["Date of Valuation"])}</div>
-                </div>
-              </div>
-
-              <div class="field-grid">
                 <div class="field-box">
                   <div class="field-label">Date of Valuation</div>
                   <div class="field-value">${formatDate(firstBuilding["Date of Valuation"])}</div>
@@ -678,6 +672,21 @@ export default function Map2() {
             )}
           </div>
         </div>
+      </div>
+
+      <div style={{ 
+        textAlign: "center", 
+        padding: "40px 24px",
+        background: "#f8f9fa" 
+      }}>
+        <Link href="/" style={{
+          color: "#006a8e",
+          fontSize: 14,
+          fontWeight: 600,
+          textDecoration: "none"
+        }}>
+          [home]
+        </Link>
       </div>
 
       {showEmailModal && (
