@@ -22,6 +22,13 @@ export default function Map1() {
   const [markers, setMarkers] = useState([]);
   const [infoWindow, setInfoWindow] = useState(null);
 
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailInput, setEmailInput] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [emailSuccess, setEmailSuccess] = useState(false);
+  const [emailSending, setEmailSending] = useState(false);
+  const [currentPropertyData, setCurrentPropertyData] = useState(null);
+
   useEffect(() => {
     fetch("/api/properties")
       .then(r => r.json())
@@ -67,6 +74,49 @@ export default function Map1() {
   function formatCurrency(value) {
     if (!value || value === 0) return "N/A";
     return "$" + value.toLocaleString();
+  }
+
+  function handleEmailReport(propertyData) {
+    setCurrentPropertyData(propertyData);
+    setShowEmailModal(true);
+    setEmailInput("");
+    setEmailError("");
+    setEmailSuccess(false);
+  }
+
+  async function sendEmailReport() {
+    if (!emailInput || !emailInput.includes('@')) {
+      setEmailError("Please enter a valid email address");
+      return;
+    }
+
+    setEmailSending(true);
+    setEmailError("");
+
+    try {
+      const res = await fetch("/api/send-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          recipientEmail: emailInput,
+          propertyData: currentPropertyData
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to send email");
+      }
+
+      setEmailSuccess(true);
+      setTimeout(() => {
+        setShowEmailModal(false);
+        setEmailSuccess(false);
+      }, 2000);
+    } catch (err) {
+      setEmailError("Failed to send email. Please try again.");
+    } finally {
+      setEmailSending(false);
+    }
   }
 
   function initMap() {
@@ -220,6 +270,24 @@ export default function Map1() {
         } : null
       });
 
+      const firstBuilding = buildings[0];
+      const propertyData = {
+        siteName: siteName,
+        buildingName: firstBuilding["Building Name"] || "",
+        entity: firstBuilding["Entity"] || "N/A",
+        address: [
+          firstBuilding["Street Address"] || "",
+          firstBuilding["Suburb / Town"] || "",
+          firstBuilding["Post Code"] || ""
+        ].filter(Boolean).join(", "),
+        recommendedSumInsured: formatCurrency(firstBuilding["Recommended Sum Insured ($)"]),
+        reinstatementCost: formatCurrency(firstBuilding["Reinstatement Cost\n($)"]),
+        inflationProvision: formatCurrency(firstBuilding["Total Cost Inflation Provision ($)"] || 0),
+        demolitionCost: formatCurrency(firstBuilding["Demolition and Removal of Debris ($)"] || 0),
+        dateOfValuation: firstBuilding["Date of Valuation"] || "N/A",
+        allData: firstBuilding
+      };
+
       let selectorHTML = "";
       let contentHTML = "";
       
@@ -264,6 +332,25 @@ export default function Map1() {
           
           <div class="iw-content">
             ${contentHTML}
+            
+            <div style="margin-top: 16px; padding-top: 16px; border-top: 2px solid #e0f2fe; text-align: center;">
+              <button 
+                id="email-report-btn"
+                style="
+                  padding: 12px 24px;
+                  background: linear-gradient(135deg, #006a8e 0%, #008bb3 100%);
+                  color: white;
+                  border: none;
+                  border-radius: 8px;
+                  font-size: 14px;
+                  font-weight: 600;
+                  cursor: pointer;
+                  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                "
+              >
+                📧 Email Full Report
+              </button>
+            </div>
           </div>
         </div>
       `;
@@ -284,6 +371,13 @@ export default function Map1() {
         infoWindow.close();
         infoWindow.setContent(fullHTML);
         infoWindow.open(map, marker);
+
+        google.maps.event.addListenerOnce(infoWindow, 'domready', () => {
+          const btn = document.getElementById('email-report-btn');
+          if (btn) {
+            btn.addEventListener('click', () => handleEmailReport(propertyData));
+          }
+        });
       });
       
       newMarkers.push(marker);
@@ -603,6 +697,138 @@ export default function Map1() {
           ← Back to Home
         </Link>
       </div>
+
+      {showEmailModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background: "rgba(0,0,0,0.5)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 10000
+        }}>
+          <div style={{
+            background: "white",
+            borderRadius: 12,
+            padding: 32,
+            maxWidth: 400,
+            width: "90%",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.2)"
+          }}>
+            <h2 style={{
+              margin: "0 0 8px 0",
+              fontSize: 24,
+              fontWeight: 700,
+              color: "#006a8e"
+            }}>
+              Email Property Report
+            </h2>
+            <p style={{
+              margin: "0 0 20px 0",
+              fontSize: 14,
+              color: "#64748b"
+            }}>
+              {currentPropertyData?.siteName}
+            </p>
+
+            {!emailSuccess ? (
+              <>
+                <input
+                  type="email"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  placeholder="Enter your email address"
+                  style={{
+                    width: "100%",
+                    padding: "12px 16px",
+                    fontSize: 15,
+                    border: emailError ? "2px solid #ef4444" : "2px solid #e2e8f0",
+                    borderRadius: 8,
+                    outline: "none",
+                    marginBottom: 8,
+                    boxSizing: "border-box"
+                  }}
+                />
+
+                {emailError && (
+                  <p style={{
+                    margin: "0 0 16px 0",
+                    fontSize: 13,
+                    color: "#ef4444"
+                  }}>
+                    {emailError}
+                  </p>
+                )}
+
+                <div style={{
+                  display: "flex",
+                  gap: 12,
+                  marginTop: 20
+                }}>
+                  <button
+                    onClick={() => setShowEmailModal(false)}
+                    disabled={emailSending}
+                    style={{
+                      flex: 1,
+                      padding: 12,
+                      background: "#f1f5f9",
+                      border: "none",
+                      borderRadius: 8,
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: "#64748b",
+                      cursor: emailSending ? "not-allowed" : "pointer"
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={sendEmailReport}
+                    disabled={emailSending}
+                    style={{
+                      flex: 1,
+                      padding: 12,
+                      background: emailSending ? "#94a3b8" : "linear-gradient(135deg, #006a8e 0%, #008bb3 100%)",
+                      border: "none",
+                      borderRadius: 8,
+                      fontSize: 14,
+                      fontWeight: 600,
+                      color: "white",
+                      cursor: emailSending ? "not-allowed" : "pointer"
+                    }}
+                  >
+                    {emailSending ? "Sending..." : "Send Report"}
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div style={{
+                textAlign: "center",
+                padding: "20px 0"
+              }}>
+                <div style={{
+                  fontSize: 48,
+                  marginBottom: 16
+                }}>
+                  ✅
+                </div>
+                <p style={{
+                  margin: 0,
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: "#006a8e"
+                }}>
+                  Email sent successfully!
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
