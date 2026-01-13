@@ -7,16 +7,16 @@ export default function Map2() {
   const [error, setError] = useState(null);
 
   const [entities, setEntities] = useState([]);
+  const [siteNames, setSiteNames] = useState([]);
   const [suburbs, setSuburbs] = useState([]);
 
   const [selectedEntity, setSelectedEntity] = useState("");
+  const [selectedSiteName, setSelectedSiteName] = useState("");
   const [selectedSuburb, setSelectedSuburb] = useState("");
 
   const [map, setMap] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [infoWindow, setInfoWindow] = useState(null);
-
-  /* ---------------- LOAD DATA (SAME AS MAP1) ---------------- */
 
   useEffect(() => {
     fetch("/api/properties2")
@@ -27,19 +27,24 @@ export default function Map2() {
           return;
         }
 
+        if (!Array.isArray(data) || data.length === 0) {
+          setError("No data available");
+          return;
+        }
+        
         setRows(data);
 
-        // ✅ EXPLICIT POPULATION (THIS WAS MISSING)
-        const entitySet = [...new Set(data.map(r => r.Entity).filter(Boolean))];
-        const suburbSet = [...new Set(data.map(r => r["Suburb / Town"]).filter(Boolean))];
+        const uniqueEntities = [...new Set(data.map(item => item.Entity).filter(Boolean))];
+        setEntities(uniqueEntities.sort());
 
-        setEntities(entitySet);
-        setSuburbs(suburbSet.sort());
+        const uniqueSiteNames = [...new Set(data.map(item => item["Site Name"]).filter(Boolean))];
+        setSiteNames(uniqueSiteNames.sort());
+
+        const uniqueSuburbs = [...new Set(data.map(item => item["Suburb / Town"]).filter(Boolean))];
+        setSuburbs(uniqueSuburbs.sort());
       })
       .catch(err => setError(err.toString()));
   }, []);
-
-  /* ---------------- MAP INIT ---------------- */
 
   useEffect(() => {
     const check = setInterval(() => {
@@ -47,7 +52,7 @@ export default function Map2() {
         clearInterval(check);
 
         const m = new google.maps.Map(document.getElementById("map2"), {
-          zoom: 7,
+          zoom: 8,
           center: { lat: -27.47, lng: 153.03 },
           styles: [
             {
@@ -69,69 +74,82 @@ export default function Map2() {
     return () => clearInterval(check);
   }, []);
 
-  /* ---------------- MARKERS (SAME PATTERN AS MAP1) ---------------- */
-
   useEffect(() => {
     if (!map || !infoWindow || rows.length === 0) return;
     updateMarkers();
-  }, [map, infoWindow, rows, selectedEntity, selectedSuburb]);
+  }, [map, infoWindow, rows, selectedEntity, selectedSiteName, selectedSuburb]);
 
   function updateMarkers() {
     markers.forEach(m => m.setMap(null));
-    infoWindow.close();
+    if (infoWindow) {
+      infoWindow.close();
+    }
+
+    if (!selectedEntity && !selectedSiteName && !selectedSuburb) {
+      setMarkers([]);
+      return;
+    }
 
     let filtered = rows;
 
     if (selectedEntity) {
-      filtered = filtered.filter(r => r.Entity === selectedEntity);
+      filtered = filtered.filter(item => item.Entity === selectedEntity);
+    }
+
+    if (selectedSiteName) {
+      filtered = filtered.filter(item => item["Site Name"] === selectedSiteName);
     }
 
     if (selectedSuburb) {
-      filtered = filtered.filter(r => r["Suburb / Town"] === selectedSuburb);
+      filtered = filtered.filter(item => item["Suburb / Town"] === selectedSuburb);
     }
 
-    const grouped = {};
-    filtered.forEach(r => {
-      const site = r["Site Name"];
-      if (!site) return;
-      grouped[site] ||= [];
-      grouped[site].push(r);
+    const groupedBySite = {};
+
+    filtered.forEach(item => {
+      const siteName = item["Site Name"];
+      if (!siteName) return;
+
+      if (!groupedBySite[siteName]) {
+        groupedBySite[siteName] = [];
+      }
+      groupedBySite[siteName].push(item);
     });
 
     const newMarkers = [];
 
-    Object.entries(grouped).forEach(([site, items]) => {
-      const coords = items[0].Coordinates;
-      if (!coords) return;
+    Object.entries(groupedBySite).forEach(([siteName, buildings]) => {
+      const firstBuilding = buildings[0];
+      if (!firstBuilding.Coordinates) return;
 
-      const [lat, lng] = coords.replace(/\s+/g, "").split(",").map(Number);
+      const coords = firstBuilding.Coordinates.replace(/\s+/g, "");
+      const parts = coords.split(",");
+      const lat = parseFloat(parts[0]);
+      const lng = parseFloat(parts[1]);
+
       if (isNaN(lat) || isNaN(lng)) return;
 
       const marker = new google.maps.Marker({
-        map,
         position: { lat, lng },
-        title: site
+        map,
+        title: siteName,
+        animation: google.maps.Animation.DROP
       });
 
       const html = `
         <div>
           <div class="iw-header">
-            <h3 class="iw-title">${site}</h3>
-            <p class="iw-subtitle">${items[0]["Suburb / Town"]}</p>
+            <h3 class="iw-title">${siteName}</h3>
           </div>
           <div class="iw-content">
             <div class="field-grid">
               <div class="field-box">
-                <div class="field-label">Reinstatement Cost</div>
-                <div class="field-value-large">
-                  ${items[0]["Reinstatement Cost\n($)"] || "N/A"}
-                </div>
+                <div class="field-label">Entity</div>
+                <div class="field-value">${firstBuilding["Entity"] || "N/A"}</div>
               </div>
               <div class="field-box">
-                <div class="field-label">Inflation Provision</div>
-                <div class="field-value-large">
-                  ${items[0]["Total Cost Inflation Provision\n($)"] || "N/A"}
-                </div>
+                <div class="field-label">Suburb / Town</div>
+                <div class="field-value">${firstBuilding["Suburb / Town"] || "N/A"}</div>
               </div>
             </div>
           </div>
@@ -149,68 +167,252 @@ export default function Map2() {
     setMarkers(newMarkers);
   }
 
-  /* ---------------- UI ---------------- */
+  const handleEntityChange = (value) => {
+    setSelectedEntity(value);
+    if (value) {
+      setSelectedSiteName("");
+      setSelectedSuburb("");
+    }
+  };
+
+  const handleSiteNameChange = (value) => {
+    setSelectedSiteName(value);
+    if (value) {
+      setSelectedEntity("");
+      setSelectedSuburb("");
+    }
+  };
+
+  const handleSuburbChange = (value) => {
+    setSelectedSuburb(value);
+    if (value) {
+      setSelectedEntity("");
+      setSelectedSiteName("");
+    }
+  };
+
+  const clearFilters = () => {
+    setSelectedEntity("");
+    setSelectedSiteName("");
+    setSelectedSuburb("");
+  };
+
+  const hasActiveFilters = selectedEntity || selectedSiteName || selectedSuburb;
 
   return (
     <div style={{ minHeight: "100vh", background: "#f8f9fa" }}>
-      <div style={{ background: "#006a8e", padding: 24 }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto", color: "white" }}>
-          <h1 style={{ margin: 0, fontSize: 28 }}>Secondary Dashboard</h1>
-          <p style={{ marginTop: 4, opacity: 0.9 }}>
-            Brisbane Catholic Education – Property Map
+      <div style={{ 
+        background: "#006a8e",
+        padding: "32px 24px",
+        boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
+      }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+          <h1 style={{ 
+            margin: "0 0 8px 0", 
+            color: "white", 
+            fontSize: 32, 
+            fontWeight: 700,
+            letterSpacing: "-0.5px"
+          }}>
+            Secondary Dashboard
+          </h1>
+          <p style={{ 
+            margin: 0, 
+            color: "rgba(255,255,255,0.9)", 
+            fontSize: 16 
+          }}>
+            Brisbane Catholic Education Property System
           </p>
         </div>
       </div>
 
       <div style={{ maxWidth: 1400, margin: "0 auto", padding: 24 }}>
         {error && (
-          <div style={{ background: "#fee2e2", padding: 16, borderRadius: 8 }}>
+          <div style={{ 
+            background: "#fee2e2", 
+            padding: 20, 
+            marginBottom: 24,
+            border: "1px solid #ef4444",
+            borderRadius: 8,
+            color: "#991b1b"
+          }}>
             <strong>Error:</strong> {error}
           </div>
         )}
 
         <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-          gap: 16,
-          marginBottom: 20
-        }}>
-          <div>
-            <label style={{ fontWeight: 700, color: "#006a8e" }}>Entity</label>
-            <select
-              value={selectedEntity}
-              onChange={e => setSelectedEntity(e.target.value)}
-              style={{ width: "100%", padding: 10 }}
-            >
-              <option value="">All</option>
-              {entities.map(e => (
-                <option key={e} value={e}>{e}</option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label style={{ fontWeight: 700, color: "#006a8e" }}>Suburb / Town</label>
-            <select
-              value={selectedSuburb}
-              onChange={e => setSelectedSuburb(e.target.value)}
-              style={{ width: "100%", padding: 10 }}
-            >
-              <option value="">All</option>
-              {suburbs.map(s => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div style={{
           background: "white",
           borderRadius: 12,
           overflow: "hidden",
-          boxShadow: "0 4px 6px rgba(0,0,0,0.1)"
+          boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+          marginBottom: 24
         }}>
-          <div id="map2" style={{ height: "700px", width: "100%" }} />
+          <div id="map2" style={{
+            width: "100%",
+            height: "700px"
+          }}></div>
+        </div>
+
+        <div style={{ 
+          background: "white",
+          padding: 24,
+          borderRadius: 12,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)"
+        }}>
+          <div style={{ 
+            display: "flex", 
+            alignItems: "center", 
+            justifyContent: "space-between",
+            marginBottom: 20
+          }}>
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                style={{
+                  padding: "8px 16px",
+                  background: "#f0f9ff",
+                  border: "1px solid #006a8e",
+                  borderRadius: 6,
+                  cursor: "pointer",
+                  fontSize: 14,
+                  fontWeight: 600,
+                  color: "#006a8e"
+                }}
+              >
+                Clear All Filters
+              </button>
+            )}
+          </div>
+
+          <div style={{ 
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: 16
+          }}>
+            <div>
+              <label style={{ 
+                display: "block",
+                marginBottom: 8,
+                fontSize: 13,
+                fontWeight: 700,
+                color: "#006a8e",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>
+                Entity
+              </label>
+              <select 
+                value={selectedEntity} 
+                onChange={(e) => handleEntityChange(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  fontSize: 15,
+                  borderRadius: 8,
+                  border: "2px solid #e0f2fe",
+                  background: "white",
+                  cursor: "pointer",
+                  transition: "border-color 0.2s",
+                  outline: "none"
+                }}
+              >
+                <option value="">All Entities</option>
+                {entities.map(entity => (
+                  <option key={entity} value={entity}>{entity}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label style={{ 
+                display: "block",
+                marginBottom: 8,
+                fontSize: 13,
+                fontWeight: 700,
+                color: "#006a8e",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>
+                Site Name
+              </label>
+              <select 
+                value={selectedSiteName} 
+                onChange={(e) => handleSiteNameChange(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  fontSize: 15,
+                  borderRadius: 8,
+                  border: "2px solid #e0f2fe",
+                  background: "white",
+                  cursor: "pointer",
+                  transition: "border-color 0.2s",
+                  outline: "none"
+                }}
+              >
+                <option value="">All Sites</option>
+                {siteNames.map(name => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label style={{ 
+                display: "block",
+                marginBottom: 8,
+                fontSize: 13,
+                fontWeight: 700,
+                color: "#006a8e",
+                textTransform: "uppercase",
+                letterSpacing: "0.5px"
+              }}>
+                Suburb / Town
+              </label>
+              <select 
+                value={selectedSuburb} 
+                onChange={(e) => handleSuburbChange(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px 16px",
+                  fontSize: 15,
+                  borderRadius: 8,
+                  border: "2px solid #e0f2fe",
+                  background: "white",
+                  cursor: "pointer",
+                  transition: "border-color 0.2s",
+                  outline: "none"
+                }}
+              >
+                <option value="">All Suburbs</option>
+                {suburbs.map(suburb => (
+                  <option key={suburb} value={suburb}>{suburb}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div style={{ 
+            marginTop: 20,
+            padding: "14px 18px",
+            background: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)",
+            borderRadius: 8,
+            display: "flex",
+            alignItems: "center",
+            gap: 16,
+            fontSize: 14,
+            color: "#0c4a6e",
+            border: "1px solid #bae6fd"
+          }}>
+            <span>
+              <strong style={{ color: "#006a8e" }}>Total Sites:</strong> {rows.length}
+            </span>
+            {hasActiveFilters && (
+              <span style={{ color: "#006a8e", fontWeight: 700 }}>
+                • Showing: {markers.length} sites
+              </span>
+            )}
+          </div>
         </div>
       </div>
     </div>
