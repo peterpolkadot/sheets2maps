@@ -276,14 +276,14 @@ export default function Map2() {
                 </div>
               </div>
               
-              <div class="field-grid">
+ <div class="field-grid">
                 <div class="field-box">
                   <div class="field-label">Total Cost Inflation Provision</div>
                   <div class="field-value">${formatCurrency(firstBuilding["Total Cost Inflation Provision ($)"])}</div>
                 </div>
                 <div class="field-box">
-                  <div class="field-label">Demolition & Removal of Debris</div>
-                  <div class="field-value">${formatCurrency(firstBuilding["Demolition and Removal of Debris ($)"])}</div>
+                  <div class="field-label">Date of Valuation</div>
+                  <div class="field-value">${formatDate(firstBuilding["Date of Valuation"])}</div>
                 </div>
               </div>
 
